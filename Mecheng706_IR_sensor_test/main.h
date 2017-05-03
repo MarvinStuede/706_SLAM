@@ -1,0 +1,12 @@
+enum STATE {
+  INITIALISING,
+  RUNNING,
+  STOPPED
+};
+
+typedef enum {
+  SHARP_DX, //2D120X
+  SHARP_Ya, //2Y0A21
+  SHARP_YA //2Y0A02
+} SHARP;
+
