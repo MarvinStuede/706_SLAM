@@ -13,7 +13,7 @@
  ../libraries/MPU/MPU.h \
  /home/marvin/arduino-1.8.2/hardware/arduino/avr/libraries/Wire/src/Wire.h \
  /home/marvin/arduino-1.8.2/hardware/arduino/avr/cores/arduino/Stream.h \
- ../SLAM_robot.ino
+ ../libraries/IRSensor/IRSensor.h ../SLAM_robot.ino
 
 /home/marvin/arduino-1.8.2/hardware/arduino/avr/cores/arduino/Arduino.h:
 
@@ -42,5 +42,7 @@
 /home/marvin/arduino-1.8.2/hardware/arduino/avr/libraries/Wire/src/Wire.h:
 
 /home/marvin/arduino-1.8.2/hardware/arduino/avr/cores/arduino/Stream.h:
+
+../libraries/IRSensor/IRSensor.h:
 
 ../SLAM_robot.ino:

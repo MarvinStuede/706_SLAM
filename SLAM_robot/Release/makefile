@@ -17,6 +17,7 @@ RM := rm -f
 -include libraries/Servo/src/nrf52/subdir.mk
 -include libraries/Servo/src/avr/subdir.mk
 -include libraries/MPU/subdir.mk
+-include libraries/IRSensor/subdir.mk
 -include core/core/subdir.mk
 -include objects.mk
 

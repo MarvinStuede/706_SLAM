@@ -37,6 +37,7 @@ CPP_DEPS :=
 SUBDIRS := \
 . \
 core/core \
+libraries/IRSensor \
 libraries/MPU \
 libraries/Servo/src/avr \
 libraries/Servo/src/nrf52 \
