@@ -3,10 +3,10 @@
 #include "libraries/IRSensor/IRSensor.h"
 
 MPU MPU9050;
-IRSensor IR_front_left(SHARP_DX,A4);
-IRSensor IR_front_right(SHARP_DX,A6);
-IRSensor IR_side_front(SHARP_Ya,A5);
-IRSensor IR_side_back(SHARP_Ya,A7);
+IRSensor IR_front_left(SHARP_DX,A1);
+IRSensor IR_front_right(SHARP_DX,A2);
+IRSensor IR_side_front(SHARP_Ya,A3);
+IRSensor IR_side_back(SHARP_Ya,A4);
 
 int gyro[3];
 
