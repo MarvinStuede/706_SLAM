@@ -71,14 +71,15 @@ STATE running() {
     previous_millis = millis();
 
     //int raw = analogRead(A1);
-    Serial1.print("s1:");
-    Serial1.println(avg);
-    /* Serial1.print(" s2:");
-     Serial1.print(read_sharp_IR_sensor(SHARP_Ya, A2));
-     Serial1.print(" s3:");
-     Serial1.print(read_sharp_IR_sensor(SHARP_Ya, A3));
-     Serial1.print(" s4:");
-     Serial1.println(read_sharp_IR_sensor(SHARP_YA, A4));*/
+    //Serial.print("s1:");
+    Serial.println(read_sharp_IR_sensor(SHARP_DX, A1));
+    //Serial.print("  s2:");
+    //Serial.println(read_sharp_IR_sensor(SHARP_DX, A2));
+    //Serial.print("s3:");
+    //Serial.println(read_sharp_IR_sensor(SHARP_Ya, A3));
+    //Serial.print("  s4:");
+    //Serial.println(read_sharp_IR_sensor(SHARP_Ya, A4));
+    //Serial.print("\n");
 
 
     //2D120X 40mm - 300mm http://www.phidgets.com/products.php?product_id=3520
@@ -114,8 +115,8 @@ STATE stopped() {
 
 }
 
-int read_sharp_IR_sensor(SHARP which_one, int which_analog_pin) {
-  int temp_dis;
+float read_sharp_IR_sensor(SHARP which_one, int which_analog_pin) {
+  float temp_dis;
   switch (which_one) {
     case SHARP_DX:
       //2D120X 4cm - 30cm http://www.phidgets.com/products.php?product_id=3520
