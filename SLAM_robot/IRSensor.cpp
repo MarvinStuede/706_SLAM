@@ -5,12 +5,13 @@
  *      Author: marvin
  */
 
-#include "../IRSensor/IRSensor.h"
+#include "IRSensor.h"
 
 
 IRSensor::IRSensor(SHARP type, int pin) {
 	type_ = type;
 	pin_ = pin;
+	oldDist_ = 0;
 }
 
 IRSensor::~IRSensor() {
@@ -18,7 +19,16 @@ IRSensor::~IRSensor() {
 }
 
 int IRSensor::getVal() {
-	return read(type_,pin_);
+	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
+	{
+		oldDist_ = read(type_,pin_);
+		chrono_.restart();
+	}
+	return oldDist_;
+}
+
+void IRSensor::setup() {
+	chrono_.start();
 }
 
 int IRSensor::read(SHARP which_one, int which_analog_pin) {

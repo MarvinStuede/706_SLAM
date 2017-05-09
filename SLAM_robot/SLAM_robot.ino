@@ -1,8 +1,10 @@
 #include "Arduino.h"
-#include "libraries/MPU/MPU.h"
-#include "libraries/IRSensor/IRSensor.h"
+#include "MPU.h"
+#include "IRSensor.h"
+#include "UltraSonicSensor.h"
 
 MPU MPU9050;
+UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
@@ -14,6 +16,11 @@ void setup()
 {
 	Serial.begin(115200);
 	MPU9050.setup();
+	IR_front_left.setup();
+	IR_front_right.setup();
+	IR_side_front.setup();
+	IR_side_back.setup();
+	ultrasonic.setup();
 }
 
 

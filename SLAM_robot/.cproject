@@ -23,8 +23,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/core/variant}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/NewPing}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Chrono}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.2141653048" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
 							</tool>
@@ -34,8 +34,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/core/variant}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/NewPing}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Chrono}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.824945355" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
 							</tool>
@@ -45,8 +45,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/core/variant}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Wire/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Servo/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/NewPing}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Chrono}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.652287467" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
 							</tool>
