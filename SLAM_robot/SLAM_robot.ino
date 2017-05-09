@@ -61,7 +61,7 @@ void loop()
 		Serial.print(calSf);
 		Serial.print(", IR_sb: ");
     sbDis = IR_side_back.getVal();
-    calSb = 1 * sbDis - 0; 
+    calSb = 0.218 * pow(sbDis,1.5159); 
 		Serial.print(calSb);
 		Serial.println();
 
