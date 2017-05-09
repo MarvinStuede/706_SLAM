@@ -47,6 +47,21 @@
 			<location>/home/marvin/arduino-1.8.2/libraries/Chrono</location>
 		</link>
 		<link>
+			<name>libraries/I2Cdev</name>
+			<type>2</type>
+			<location>/home/marvin/arduino-1.8.2/libraries/I2Cdev</location>
+		</link>
+		<link>
+			<name>libraries/KalmanFilter</name>
+			<type>2</type>
+			<location>/home/marvin/arduino-1.8.2/libraries/KalmanFilter</location>
+		</link>
+		<link>
+			<name>libraries/MPU9150</name>
+			<type>2</type>
+			<location>/home/marvin/arduino-1.8.2/libraries/MPU9150</location>
+		</link>
+		<link>
 			<name>libraries/NewPing</name>
 			<type>2</type>
 			<location>/home/marvin/arduino-1.8.2/libraries/NewPing</location>

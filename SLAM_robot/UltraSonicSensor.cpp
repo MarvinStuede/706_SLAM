@@ -19,7 +19,7 @@ void UltraSonicSensor::setup() {
 	chrono_.start();
 }
 
-float UltraSonicSensor::getDistance() {
+float UltraSonicSensor::getDistance(){
 
 	if(chrono_.elapsed() > 50)//Wait 50ms between measurements
 	{
