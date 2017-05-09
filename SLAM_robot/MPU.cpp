@@ -11,6 +11,9 @@
 
 MPU::MPU() {
 	// TODO Auto-generated constructor stub
+	magBias_[0] = 0;
+	magBias_[1] = 0;
+	magBias_[2] = 0;
 
 }
 
@@ -21,7 +24,7 @@ MPU::~MPU() {
 void MPU::setup() {
 	mpu.initialize();
 	mpu.setFullScaleGyroRange(0x00); //Set max range to +- 250 deg/s
-	calibrate();
+	//calibrate();
 }
 
 void MPU::calibrate()

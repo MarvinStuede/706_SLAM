@@ -41,16 +41,19 @@ void loop()
 	Serial.print(" ");
 	Serial.println();
 
+		//Serial.print(ultrasonic.getDistance());
+//		Serial.print(" ");
+//		Serial.println();
 
-	//	Serial.print("IR_fl: ");
-	//	Serial.print(IR_front_left.getVal());
-	//	Serial.print(", IR_fr: ");
-	//	Serial.print(IR_front_right.getVal());
-	//	Serial.print(", IR_sf: ");
-	//	Serial.print(IR_side_front.getVal());
-	//	Serial.print(", IR_sb: ");
-	//	Serial.print(IR_side_back.getVal());
-	//	Serial.println();
+//		Serial.print("IR_fl: ");
+//		Serial.print(IR_front_left.getVal());
+//		Serial.print(", IR_fr: ");
+//		Serial.print(IR_front_right.getVal());
+//		Serial.print(", IR_sf: ");
+//		Serial.print(IR_side_front.getVal());
+//		Serial.print(", IR_sb: ");
+//		Serial.print(IR_side_back.getVal());
+//		Serial.println();
 
 	delay(100);
 }
