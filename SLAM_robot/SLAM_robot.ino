@@ -31,29 +31,39 @@ void setup()
 void loop()
 {
 	double dt = (double)(micros() - timer) / 1000000; // Calculate delta time
+  float flDis,frDis,sfDis,sbDis;
+  float calFl,calFr,calSf,calSb;
 	timer = micros();
-	mpu.getGyro(mag);
-	Serial.print(mag[0]);
-	Serial.print(" ");
-	Serial.print(mag[1]);
-	Serial.print(" ");
-	Serial.print(mag[2]);
-	Serial.print(" ");
-	Serial.println();
+	//mpu.getGyro(mag);
+	//Serial.print(mag[0]);
+	//Serial.print(" ");
+	//Serial.print(mag[1]);
+	//Serial.print(" ");
+	//Serial.print(mag[2]);
+	//Serial.print(" ");
+	//Serial.println();
 
-		//Serial.print(ultrasonic.getDistance());
+//		Serial.print(ultrasonic.getDistance());
 //		Serial.print(" ");
 //		Serial.println();
 
-//		Serial.print("IR_fl: ");
-//		Serial.print(IR_front_left.getVal());
-//		Serial.print(", IR_fr: ");
-//		Serial.print(IR_front_right.getVal());
-//		Serial.print(", IR_sf: ");
-//		Serial.print(IR_side_front.getVal());
-//		Serial.print(", IR_sb: ");
-//		Serial.print(IR_side_back.getVal());
-//		Serial.println();
+		Serial.print("IR_fl: ");
+    flDis = IR_front_left.getVal();
+    calFl = 1.4197 * flDis - 2.8392;
+		Serial.print(calFl);
+		Serial.print(", IR_fr: ");
+    frDis = IR_front_right.getVal();
+    calFr = 1.1074 * frDis - 0.4708;
+		Serial.print(calFr);
+		Serial.print(", IR_sf: ");
+    sfDis = IR_side_front.getVal();
+    calSf = 2.0813 * sfDis - 16.074;
+		Serial.print(calSf);
+		Serial.print(", IR_sb: ");
+    sbDis = IR_side_back.getVal();
+    calSb = 1 * sbDis - 0; 
+		Serial.print(calSb);
+		Serial.println();
 
 	delay(100);
 }
