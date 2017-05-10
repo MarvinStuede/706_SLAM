@@ -18,6 +18,10 @@ Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
 float dt;
+float FL[9];
+float FR[9];
+float SF[9];
+float SB[9];
 void setup()
 {
 	Serial.begin(115200);
@@ -40,7 +44,6 @@ void loop()
 	timer = micros;
 	float calFl,calFr,calSf,calSb;
 
-
 	//mpu.getGyro(mag);
 	//Serial.print(mag[0]);
 	//Serial.print(" ");
@@ -56,18 +59,93 @@ void loop()
 
 //	Serial.print("IR_fl: ");
 //	calFl = IR_front_left.getValue(LINEAR);
-//	Serial.print(calFl);
+//	Serial.print(medianFilter(calFl,1));
 //	Serial.print(", IR_fr: ");
 //	calFr = IR_front_right.getValue(LINEAR);
-//	Serial.print(calFr);
+//	Serial.print(medianFilter(calFr,1));
 //	Serial.print(", IR_sf: ");
 //	calSf = IR_side_front.getValue(LINEAR);
-//	Serial.print(calSf);
+//	Serial.print(medianFilter(calSf,1));
 //	Serial.print(", IR_sb: ");
 //	calSb = IR_side_back.getValue(EXPONENTIAL);
-//	Serial.print(calSb);
+//	Serial.print(medianFilter(calSb,1));
 //	Serial.println();
 
 
 	delay(100);
 }
+
+float medianFilter(float cal, int type)
+{
+  //Size of 9
+  float arrayofcal[9];
+  float holder;
+
+  switch(type) {
+    case 1:
+      arrayofcal = FL;
+      break;
+    case 2:
+      arrayofcal = FR;
+      break;
+    case 3:
+      arrayofcal = SF;
+      break;
+    case 4:
+      arrayofcal = SB;
+      break;
+  }
+  
+  for (i = 1; i < 9; i++) {
+    arrayofcal[i-1] = arrayofcal[i];
+  }
+  arrayofcal[8] = cal;
+
+  //Sorting
+  for(x = 0; x < 8; x++) {
+   for(y = 0; y < 8-(x+1); y++) {
+     if(arrayofcal[y] > arrayofcal[y+1]) {
+       holder = arrayofcal[y+1];
+       arrayofcal[y+1] = arrayofcal[y];
+       arrayofcal[y] = holder;
+     }
+   }
+  }
+
+  switch(type) {
+    case 1:
+      FL = arrayofcal;
+      break;
+    case 2:
+      FR = arrayofcal;
+      break;
+    case 3:
+      SF = arrayofcal;
+      break;
+    case 4:
+      SB = arrayofcal;
+      break;
+  }
+  return arrayofcal[4];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
