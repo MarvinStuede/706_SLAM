@@ -4,6 +4,7 @@
 #include "I2Cdev.h"
 #include "MPU.h"
 #include "Kalman.h"
+#include "MobilePlatform.h"
 
 MPU mpu;
 UltraSonicSensor ultrasonic;
@@ -11,6 +12,8 @@ IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
 IRSensor IR_side_back(SHARP_Ya,A4);
+MobilePlatform robot;
+
 Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
@@ -24,6 +27,7 @@ void setup()
 	IR_side_back.setup(0.218,1.5159);
 	ultrasonic.setup();
 	mpu.setup();
+	robot.setup();
 	timer = micros();
 }
 
