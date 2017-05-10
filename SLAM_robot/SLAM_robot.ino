@@ -17,7 +17,7 @@ MobilePlatform robot;
 Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
-
+float dt;
 void setup()
 {
 	Serial.begin(115200);
@@ -29,15 +29,17 @@ void setup()
 	mpu.setup();
 	robot.setup();
 	timer = micros();
+
 }
 
 
 void loop()
 {
-	double dt = (double)(micros() - timer) / 1000000; // Calculate delta time
-	float flDis,frDis,sfDis,sbDis;
+	dt = (float) (timer - micros())/1000000;
+	timer = micros;
 	float calFl,calFr,calSf,calSb;
-	timer = micros();
+
+
 	//mpu.getGyro(mag);
 	//Serial.print(mag[0]);
 	//Serial.print(" ");

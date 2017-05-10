@@ -28,16 +28,21 @@ public:
 	void setSpeed(float speed);
 	bool isBatteryVoltageTooLow();
 private:
-	static const byte pinLeftFront_ = 46;
-	static const byte pinLeftBack_ = 47;
-	static const byte pinRightBack_ = 48;
-	static const byte pinRightFront_ = 49;
+	static const byte pinLeftFront_ = 22;
+	static const byte pinLeftBack_ = 23;
+	static const byte pinRightBack_ = 24;
+	static const byte pinRightFront_ = 25;
+	static constexpr float l1_ = 0.0863;
+	static constexpr float l2_ = 0.0763;
+	static constexpr float Rw_ = 0.0275;
 	Servo motorFrontLeft_;
 	Servo motorFrontRight_;
 	Servo motorBackLeft_;
 	Servo motorBackRight_;
 	LightChrono chronoBattery_;
 	float speed_;
+
+	void inverseKinematics(float &dt1,float &dt2,float &dt3,float &dt4,float vx, float vy, float omega);
 };
 
 #endif /* MOBILEPLATFORM_H_ */

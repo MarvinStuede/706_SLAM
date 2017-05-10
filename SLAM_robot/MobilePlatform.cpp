@@ -107,3 +107,12 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 	  }
 	  return false;
 }
+
+void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
+		float& dt4, float vx, float vy, float omega) {
+	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);
+	dt2 = 1/Rw_ * (vx - vy + (l2_ + l1_) * omega);
+	dt3 = 1/Rw_ * (vx - vy - (l2_ + l1_) * omega);
+	dt4 = 1/Rw_ * (vx + vy + (l2_ + l1_) * omega);
+
+}
