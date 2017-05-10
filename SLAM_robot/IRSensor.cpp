@@ -13,17 +13,26 @@ IRSensor::IRSensor(SHARP type, int pin) {
 	pin_ = pin;
 	oldDist_ = 0;
   numValues = 0;
+	corrParam1_ = 1;
+	corrParam2_ = 0;
 }
 
 IRSensor::~IRSensor() {
 	// TODO Auto-generated destructor stub
 }
 
-int IRSensor::getVal() {
+float IRSensor::getValue(corrType type) {
+	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-		//oldDist_ = read(type_,pin_);
-    oldDist_ = movingAverFilter(read(type_,pin_));
+		readVal = movingAverFilter(read(type_, pin_));
+		if(type == LINEAR){
+			oldDist_ = getCorrectLinear(readVal);
+		}
+		else if(type == EXPONENTIAL){
+			oldDist_ = getCorrectExp(readVal);
+		}
+
 		chrono_.restart();
 	}
 	return oldDist_;
@@ -49,9 +58,11 @@ float IRSensor::movingAverFilter(float curDistance){
   return (float)sum/numValues;
 }
 
+void IRSensor::setup(float a1, float a2) {
 
-void IRSensor::setup() {
 	chrono_.start();
+	corrParam1_ = a1;
+	corrParam2_ = a2;
 }
 
 int IRSensor::read(SHARP which_one, int which_analog_pin) {
@@ -91,4 +102,12 @@ int IRSensor::read(SHARP which_one, int which_analog_pin) {
 		return temp_dis;
 		break;
 	}
+}
+
+float IRSensor::getCorrectLinear(float val) {
+	return corrParam1_ * val + corrParam2_;
+}
+
+float IRSensor::getCorrectExp(float val) {
+	return corrParam1_ * pow(val,corrParam2_);
 }
