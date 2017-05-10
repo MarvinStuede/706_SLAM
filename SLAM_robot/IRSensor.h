@@ -14,18 +14,27 @@
 	  SHARP_Ya, //2Y0A21
 	  SHARP_YA //2Y0A02
 	} SHARP;
+typedef enum corrType{
+	LINEAR,
+	EXPONENTIAL
+}cType;
 class IRSensor {
 
 public:
 	IRSensor(SHARP type, int avgNum);
 	virtual ~IRSensor();
-	int getVal();
-	void setup();
+	float getValue(corrType type = LINEAR);
+	void setup(float a1, float a2);
+
 private:
 	SHARP type_;
 	LightChrono chrono_;
 	float oldDist_;
 	int pin_;
+	float corrParam1_;
+	float corrParam2_;
+	float getCorrectLinear(float val);
+	float getCorrectExp(float val);
 	int read(SHARP which_one, int which_analog_pin);
 };
 
