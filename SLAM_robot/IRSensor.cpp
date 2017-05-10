@@ -38,25 +38,53 @@ float IRSensor::getValue(corrType type) {
 	return oldDist_;
 }
 
-float IRSensor::movingAverFilter(float curDistance){
+float IRSensor::movingMedianFilter(float curDistance){
   float sum = 0;
-  if (numValues < 10) {
+  float holder = 0;
+  if (numValues < 9) {
     recordDistances[numValues] = curDistance;
     numValues++;
   }else {
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 9; i++) {
       recordDistances[i-1] = recordDistances[i];
     }
 
-    recordDistances[9] = curDistance;
+    recordDistances[8] = curDistance;
+  }
+  
+  //Sorting
+  for(int x = 0; x < 8; x++) {
+   for(int y = 0; y < 8-(x+1); y++) {
+     if(arrayofcal[y] > arrayofcal[y+1]) {
+       holder = recordDistances[y+1];
+       recordDistances[y+1] = recordDistances[y];
+       recordDistances[y] = holder;
+     }
+   }
   }
 
-  for (int i = 0; i < numValues; i++) {
-    sum += recordDistances[i];
-  }
-
-  return (float)sum/numValues;
+  return (float)recordDistances[4];
 }
+
+//float IRSensor::movingAverFilter(float curDistance){
+//  float sum = 0;
+//  if (numValues < 10) {
+//    recordDistances[numValues] = curDistance;
+//    numValues++;
+//  }else {
+//    for (int i = 1; i < 10; i++) {
+//      recordDistances[i-1] = recordDistances[i];
+//    }
+//
+//    recordDistances[9] = curDistance;
+//  }
+//
+//  for (int i = 0; i < numValues; i++) {
+//    sum += recordDistances[i];
+//  }
+//
+//  return (float)sum/numValues;
+//}
 
 void IRSensor::setup(float a1, float a2) {
 

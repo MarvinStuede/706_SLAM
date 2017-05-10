@@ -37,6 +37,7 @@ private:
 	float getCorrectExp(float val);
 	int read(SHARP which_one, int which_analog_pin);
   float movingAverFilter(float curDistance);
+  float movingMedianFilter(float curDistance);
   int numValues;
   float recordDistances[10];
 };
