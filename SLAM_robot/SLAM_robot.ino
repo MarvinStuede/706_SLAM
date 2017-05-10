@@ -4,9 +4,10 @@
 #include "I2Cdev.h"
 #include "MPU.h"
 #include "Kalman.h"
+#include "Wire.h"
 
 MPU mpu;
-UltraSonicSensor ultrasonic;
+//UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
@@ -22,7 +23,7 @@ void setup()
 	IR_front_right.setup();
 	IR_side_front.setup();
 	IR_side_back.setup();
-	ultrasonic.setup();
+	//ultrasonic.setup();
 	mpu.setup();
 	timer = micros();
 }
@@ -32,7 +33,7 @@ void loop()
 {
 	double dt = (double)(micros() - timer) / 1000000; // Calculate delta time
 	timer = micros();
-	mpu.getGyro(mag);
+	/*mpu.getMag(mag);
 	Serial.print(mag[0]);
 	Serial.print(" ");
 	Serial.print(mag[1]);
@@ -40,13 +41,13 @@ void loop()
 	Serial.print(mag[2]);
 	Serial.print(" ");
 	Serial.println();
-
+*/
 		//Serial.print(ultrasonic.getDistance());
 //		Serial.print(" ");
 //		Serial.println();
 
-//		Serial.print("IR_fl: ");
-//		Serial.print(IR_front_left.getVal());
+		//Serial.print("IR_fl: ");
+		Serial.println(IR_front_left.getVal());
 //		Serial.print(", IR_fr: ");
 //		Serial.print(IR_front_right.getVal());
 //		Serial.print(", IR_sf: ");
