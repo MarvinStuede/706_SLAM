@@ -7,7 +7,7 @@
 #include "MobilePlatform.h"
 
 MPU mpu;
-UltraSonicSensor ultrasonic;
+//UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
@@ -21,6 +21,7 @@ float dt;
 void setup()
 {
 	Serial.begin(115200);
+
 	IR_front_left.setup(1.4197,-2.8392);
 	IR_front_right.setup(1.1074,-0.4708);
 	IR_side_front.setup(2.0813,-16.074);
@@ -66,6 +67,7 @@ void loop()
 //	calSb = IR_side_back.getValue(EXPONENTIAL);
 //	Serial.print(calSb);
 //	Serial.println();
+
 
 	delay(100);
 }

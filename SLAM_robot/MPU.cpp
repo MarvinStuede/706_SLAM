@@ -24,6 +24,7 @@ MPU::~MPU() {
 void MPU::setup() {
 	mpu.initialize();
 	mpu.setFullScaleGyroRange(0x00); //Set max range to +- 250 deg/s
+
 	//calibrate();
 }
 
@@ -79,7 +80,7 @@ void MPU::getGyro(float* data) {
 	int16_t gx, gy, gz;
 	int16_t mx, my, mz;
 	mpu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
-	data[0] = gx;
-	data[1] = gy;
-	data[2] = gz;
+	data[0] = (float)ax;
+	data[1] = (float)ay;
+	data[2] = (float)az;
 }

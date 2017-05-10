@@ -12,6 +12,7 @@ IRSensor::IRSensor(SHARP type, int pin) {
 	type_ = type;
 	pin_ = pin;
 	oldDist_ = 0;
+  numValues = 0;
 	corrParam1_ = 1;
 	corrParam2_ = 0;
 }
@@ -24,19 +25,41 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-		readVal = read(type_,pin_);
+		readVal = movingAverFilter(read(type_, pin_));
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
 		}
 		else if(type == EXPONENTIAL){
 			oldDist_ = getCorrectExp(readVal);
 		}
+
 		chrono_.restart();
 	}
 	return oldDist_;
 }
 
+float IRSensor::movingAverFilter(float curDistance){
+  float sum = 0;
+  if (numValues < 10) {
+    recordDistances[numValues] = curDistance;
+    numValues++;
+  }else {
+    for (int i = 1; i < 10; i++) {
+      recordDistances[i-1] = recordDistances[i];
+    }
+
+    recordDistances[9] = curDistance;
+  }
+
+  for (int i = 0; i < numValues; i++) {
+    sum += recordDistances[i];
+  }
+
+  return (float)sum/numValues;
+}
+
 void IRSensor::setup(float a1, float a2) {
+
 	chrono_.start();
 	corrParam1_ = a1;
 	corrParam2_ = a2;

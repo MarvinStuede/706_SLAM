@@ -36,6 +36,9 @@ private:
 	float getCorrectLinear(float val);
 	float getCorrectExp(float val);
 	int read(SHARP which_one, int which_analog_pin);
+  float movingAverFilter(float curDistance);
+  int numValues;
+  float recordDistances[10];
 };
 
 #endif /* LIBRARIES_IRSENSOR_IRSENSOR_H_ */
