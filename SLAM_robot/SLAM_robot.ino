@@ -7,7 +7,7 @@
 #include "MobilePlatform.h"
 
 MPU mpu;
-//UltraSonicSensor ultrasonic;
+UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
@@ -41,7 +41,7 @@ void setup()
 void loop()
 {
 	dt = (float) (timer - micros())/1000000;
-	timer = micros;
+	timer = micros();
 	float calFl,calFr,calSf,calSb;
 
 	//mpu.getGyro(mag);
@@ -57,23 +57,26 @@ void loop()
 	//		Serial.print(" ");
 	//		Serial.println();
 
-//	Serial.print("IR_fl: ");
-//	calFl = IR_front_left.getValue(LINEAR);
-    Serial.print( IR_front_left.movingMedianFilter(calFl) );
+	Serial.print("IR_fl: ");
+	calFl = IR_front_left.getValue(LINEAR);
+  Serial.print(calFl);
 //	Serial.print(medianFilter(calFl,1));
-//	Serial.print(", IR_fr: ");
-//	calFr = IR_front_right.getValue(LINEAR);
-    Serial.print( IR_front_right.movingMedianFilter(calFr) );
+	Serial.print(", IR_fr: ");
+	calFr = IR_front_right.getValue(LINEAR);
+  Serial.print(calFr);
+//    Serial.print( IR_front_right.movingMedianFilter(calFr) );
 //	Serial.print(medianFilter(calFr,2));
-//	Serial.print(", IR_sf: ");
-//	calSf = IR_side_front.getValue(LINEAR);
-    Serial.print( IR_side_front.movingMedianFilter(calSf) );
+	Serial.print(", IR_sf: ");
+	calSf = IR_side_front.getValue(LINEAR);
+  Serial.print(calSf);
+//    Serial.print( IR_side_front.movingMedianFilter(calSf) );
 //	Serial.print(medianFilter(calSf,3));
-//	Serial.print(", IR_sb: ");
-//	calSb = IR_side_back.getValue(EXPONENTIAL);
-    Serial.print( IR_side_back.movingMedianFilter(calSb) );
+	Serial.print(", IR_sb: ");
+	calSb = IR_side_back.getValue(EXPONENTIAL);
+  Serial.print(calSb);
+//    Serial.print( IR_side_back.movingMedianFilter(calSb) );
 //	Serial.print(medianFilter(calSb,4));
-//	Serial.println();
+	Serial.println();
 
 
 	delay(100);

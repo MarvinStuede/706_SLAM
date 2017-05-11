@@ -46,3 +46,4 @@ private:
 };
 
 #endif /* MOBILEPLATFORM_H_ */
+

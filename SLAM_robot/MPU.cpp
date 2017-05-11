@@ -84,3 +84,4 @@ void MPU::getGyro(float* data) {
 	data[1] = (float)ay;
 	data[2] = (float)az;
 }
+

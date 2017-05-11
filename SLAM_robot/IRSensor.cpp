@@ -25,7 +25,8 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-		readVal = movingAverFilter(read(type_, pin_));
+		readVal = movingMedianFilter(read(type_, pin_));
+    readVal = read(type_, pin_);
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
 		}
@@ -55,7 +56,7 @@ float IRSensor::movingMedianFilter(float curDistance){
   //Sorting
   for(int x = 0; x < 8; x++) {
    for(int y = 0; y < 8-(x+1); y++) {
-     if(arrayofcal[y] > arrayofcal[y+1]) {
+     if(recordDistances[y] > recordDistances[y+1]) {
        holder = recordDistances[y+1];
        recordDistances[y+1] = recordDistances[y];
        recordDistances[y] = holder;
@@ -139,3 +140,4 @@ float IRSensor::getCorrectLinear(float val) {
 float IRSensor::getCorrectExp(float val) {
 	return corrParam1_ * pow(val,corrParam2_);
 }
+

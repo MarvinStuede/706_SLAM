@@ -43,3 +43,4 @@ private:
 };
 
 #endif /* LIBRARIES_IRSENSOR_IRSENSOR_H_ */
+

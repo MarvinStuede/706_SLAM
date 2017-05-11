@@ -24,3 +24,4 @@ float PIDController::getControlVar(float error) {
 void PIDController::reset() {
 	errorSum_ = 0;
 }
+

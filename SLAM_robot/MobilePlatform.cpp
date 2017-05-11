@@ -116,3 +116,4 @@ void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 	dt4 = 1/Rw_ * (vx + vy + (l2_ + l1_) * omega);
 
 }
+
