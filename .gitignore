@@ -1,8 +1,4 @@
 Release/
-*.cproject
-*.ino.cpp
-*.project
-
 
 # Compiled Object files
 *.slo

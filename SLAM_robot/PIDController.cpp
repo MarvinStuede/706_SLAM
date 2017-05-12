@@ -11,6 +11,7 @@ PIDController::PIDController(float Kp, float Ki, float Kd,float stepSize) {
 	Kp_ = Kp;
 	Ki_ = Ki;
 	Kd_ = Kd;
+	errorOld_ = 0;
 	Ta_ = 1/stepSize;
 }
 
