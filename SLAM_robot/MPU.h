@@ -10,7 +10,10 @@
 #include <Wire.h>
 #include <Arduino.h>
 #include <LightChrono.h>
-#include "MPU9150.h"
+#include "MPU9250.h"
+#include "quaternionFilters.h"
+#define AHRS true         // Set to false for basic data read
+#define SerialDebug true  // Set to true to get Serial output for debugging
 
 class MPU {
 public:
@@ -19,12 +22,15 @@ public:
 	void setup();
 	void getMag(float *data);
 	void getGyro(float *data);
+	void getRPY(float &roll, float &pitch, float &yaw);
+	void readRegisters();
 
 private:
-	MPU9150 mpu;
+	MPU9250 mpu;
 	float magBias_[3];
 	void readMagData(int16_t *magData);
 	void calibrate();
+	void updateQuaternions();
 
 };
 
