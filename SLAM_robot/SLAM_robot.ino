@@ -62,6 +62,7 @@ void loop()
 	
 	mpu.readRegisters();
 	float calFl,calFr,calSf,calSb;
+<<<<<<< HEAD
   //mpu.getMag(mag);
 	mpu.getGyro(gyr);
  mpu.getRPY(roll,pitch,yaw);
@@ -76,31 +77,46 @@ void loop()
     //Serial.print(angle);
   //Serial.print(" ");
 	//Serial.println();
+=======
+	mpu.getRPY(mag[0],mag[1],mag[2]);
+//	Serial.print(mag[0]);
+//	Serial.print(" ");
+//	Serial.print(mag[1]);
+//	Serial.print(" ");
+//	Serial.print(mag[2]);
+//	Serial.print(" ");
+//	Serial.println();
+>>>>>>> d16f02be2629dca905779ae0dc0ead89a074abe6
 
-	//		Serial.print(ultrasonic.getDistance());
-	//		Serial.print(" ");
-	//		Serial.println();
+  	Serial.print(ultrasonic.getDistance());
+//		Serial.print(" ");
+		Serial.println();
 
 //	Serial.print("IR_fl: ");
 //	calFl = IR_front_left.getValue(LINEAR);
 //  Serial.print(calFl);
-////	Serial.print(medianFilter(calFl,1));
+//  Serial.print( IR_front_right.movingMedianFilter(calFl) );
+//	Serial.print(medianFilter(calFl,1));
+
 //	Serial.print(", IR_fr: ");
 //	calFr = IR_front_right.getValue(LINEAR);
 //  Serial.print(calFr);
-////    Serial.print( IR_front_right.movingMedianFilter(calFr) );
-////	Serial.print(medianFilter(calFr,2));
+//  Serial.print( IR_front_right.movingMedianFilter(calFr) );
+//  erial.print(medianFilter(calFr,2));
+
 //	Serial.print(", IR_sf: ");
 //	calSf = IR_side_front.getValue(LINEAR);
 //  Serial.print(calSf);
-////    Serial.print( IR_side_front.movingMedianFilter(calSf) );
-////	Serial.print(medianFilter(calSf,3));
+//  Serial.print( IR_side_front.movingMedianFilter(calSf) );
+//	Serial.print(medianFilter(calSf,3));
+
 //	Serial.print(", IR_sb: ");
 //	calSb = IR_side_back.getValue(EXPONENTIAL);
 //  Serial.print(calSb);
-////    Serial.print( IR_side_back.movingMedianFilter(calSb) );
-////	Serial.print(medianFilter(calSb,4));
-//	Serial.println();
+//  Serial.print( IR_side_back.movingMedianFilter(calSb) );
+//	Serial.print(medianFilter(calSb,4));
+
+	Serial.println();
 
 
 	delay(10);

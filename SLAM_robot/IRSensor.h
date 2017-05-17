@@ -35,7 +35,7 @@ private:
 	float corrParam2_;
 	float getCorrectLinear(float val);
 	float getCorrectExp(float val);
-	int read(SHARP which_one, int which_analog_pin);
+	float read(SHARP which_one, int which_analog_pin);
   float movingAverFilter(float curDistance);
   float movingMedianFilter(float curDistance);
   int numValues;

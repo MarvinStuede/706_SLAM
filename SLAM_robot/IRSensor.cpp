@@ -25,14 +25,15 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-		readVal = movingMedianFilter(read(type_, pin_));
+		//readVal = movingMedianFilter(read(type_, pin_));
     readVal = read(type_, pin_);
-		if(type == LINEAR){
-			oldDist_ = getCorrectLinear(readVal);
-		}
-		else if(type == EXPONENTIAL){
-			oldDist_ = getCorrectExp(readVal);
-		}
+    oldDist_ = readVal;
+//		if(type == LINEAR){
+//			oldDist_ = getCorrectLinear(readVal);
+//		}
+//		else if(type == EXPONENTIAL){
+//			oldDist_ = getCorrectExp(readVal);
+//		}
 
 		chrono_.restart();
 	}
@@ -94,8 +95,8 @@ void IRSensor::setup(float a1, float a2) {
 	corrParam2_ = a2;
 }
 
-int IRSensor::read(SHARP which_one, int which_analog_pin) {
-	int temp_dis;
+float IRSensor::read(SHARP which_one, int which_analog_pin) {
+	float temp_dis;
 	switch (which_one) {
 	case SHARP_DX:
 		//2D120X 4cm - 30cm http://www.phidgets.com/products.php?product_id=3520
