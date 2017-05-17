@@ -40,19 +40,19 @@ void MPU::setup() {
 		Serial.println("MPU9250 is online...");
 
 		// Start by performing self test and reporting values
-		mpu.MPU9250SelfTest(mpu.SelfTest);
+		mpu.MPU9250SelfTest(mpu.selfTest);
 		Serial.print("x-axis self test: acceleration trim within : ");
-		Serial.print(mpu.SelfTest[0],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[0],1); Serial.println("% of factory value");
 		Serial.print("y-axis self test: acceleration trim within : ");
-		Serial.print(mpu.SelfTest[1],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[1],1); Serial.println("% of factory value");
 		Serial.print("z-axis self test: acceleration trim within : ");
-		Serial.print(mpu.SelfTest[2],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[2],1); Serial.println("% of factory value");
 		Serial.print("x-axis self test: gyration trim within : ");
-		Serial.print(mpu.SelfTest[3],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[3],1); Serial.println("% of factory value");
 		Serial.print("y-axis self test: gyration trim within : ");
-		Serial.print(mpu.SelfTest[4],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[4],1); Serial.println("% of factory value");
 		Serial.print("z-axis self test: gyration trim within : ");
-		Serial.print(mpu.SelfTest[5],1); Serial.println("% of factory value");
+		Serial.print(mpu.selfTest[5],1); Serial.println("% of factory value");
 
 		// Calibrate gyro and accelerometers, load biases in bias registers
 		mpu.calibrateMPU9250(mpu.gyroBias, mpu.accelBias);
@@ -69,18 +69,19 @@ void MPU::setup() {
 		Serial.print(" I should be "); Serial.println(0x48, HEX);
 
 		// Get magnetometer calibration from AK8963 ROM
-		mpu.initAK8963(mpu.magCalibration);
+		mpu.initAK8963(mpu.factoryMagCalibration);
+
 		// Initialize device for active mode read of magnetometer
 		Serial.println("AK8963 initialized for active data mode....");
 		if (SerialDebug)
 		{
 			//  Serial.println("Calibration values: ");
 			Serial.print("X-Axis sensitivity adjustment value ");
-			Serial.println(mpu.magCalibration[0], 2);
+			Serial.println(mpu.factoryMagCalibration[0], 2);
 			Serial.print("Y-Axis sensitivity adjustment value ");
-			Serial.println(mpu.magCalibration[1], 2);
+			Serial.println(mpu.factoryMagCalibration[1], 2);
 			Serial.print("Z-Axis sensitivity adjustment value ");
-			Serial.println(mpu.magCalibration[2], 2);
+			Serial.println(mpu.factoryMagCalibration[2], 2);
 		}
 		//calibrate();
 	}
@@ -165,11 +166,11 @@ void MPU::readRegisters() {
 	    mpu.getMres();
 	    // User environmental x-axis correction in milliGauss, should be
 	    // automatically calculated
-	    mpu.magbias[0] = +470.;
+	    mpu.magBias[0] = +470.;
 	    // User environmental x-axis correction in milliGauss TODO axis??
-	    mpu.magbias[1] = +120.;
+	    mpu.magBias[1] = +120.;
 	    // User environmental x-axis correction in milliGauss
-	    mpu.magbias[2] = +125.;
+	    mpu.magBias[2] = +125.;
 //	    mpu.magbias[0] = magBias_[0];
 //	    // User environmental x-axis correction in milliGauss TODO axis??
 //	    mpu.magbias[1] = magBias_[1];
@@ -180,12 +181,12 @@ void MPU::readRegisters() {
 	    // Include factory calibration per data sheet and user environmental
 	    // corrections
 	    // Get actual magnetometer value, this depends on scale being set
-	    mpu.mx = (float)mpu.magCount[0]*mpu.mRes*mpu.magCalibration[0] -
-	               mpu.magbias[0];
-	    mpu.my = (float)mpu.magCount[1]*mpu.mRes*mpu.magCalibration[1] -
-	               mpu.magbias[1];
-	    mpu.mz = (float)mpu.magCount[2]*mpu.mRes*mpu.magCalibration[2] -
-	               mpu.magbias[2];
+	    mpu.mx = (float)mpu.magCount[0]*mpu.mRes*mpu.factoryMagCalibration[0] -
+	               mpu.magBias[0];
+	    mpu.my = (float)mpu.magCount[1]*mpu.mRes*mpu.factoryMagCalibration[1] -
+	               mpu.magBias[1];
+	    mpu.mz = (float)mpu.magCount[2]*mpu.mRes*mpu.factoryMagCalibration[2] -
+	               mpu.magBias[2];
 	  } // if (readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01)
 
 }
@@ -194,7 +195,7 @@ void MPU::updateQuaternions() {
 	  mpu.updateTime();
 	  // MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz);
 
-	  MahonyQuaternionUpdate(mpu.ax, mpu.ay, mpu.az, mpu.gx*DEG_TO_RAD,
+	  MahonyQuaternionUpdate(mpu.ax, mpu.ay, -mpu.az, mpu.gx*DEG_TO_RAD,
 	                         mpu.gy*DEG_TO_RAD, mpu.gz*DEG_TO_RAD, mpu.my,
 	                         mpu.mx, mpu.mz, mpu.deltat);
 

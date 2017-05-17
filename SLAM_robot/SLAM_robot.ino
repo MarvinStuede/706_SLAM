@@ -17,13 +17,25 @@ MobilePlatform robot;
 Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
-float dt;
+float gyr[3];
+double dt = 0;
+
 //float FL[9];
 //float FR[9];
 //float SF[9];
 //float SB[9];
+float angle = 0;
+float kalAngle = 0;
+double startTime = 0;
+double prevTime = 0;
+bool firstLoop = true;
+float roll = 0;
+float pitch = 0;
+float yaw = 0;
+
 void setup()
 {
+  prevTime = ((double)micros())/1000000;
 	Serial.begin(115200);
 
 	IR_front_left.setup(1.4197,-2.8392);
@@ -33,25 +45,37 @@ void setup()
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
-	timer = micros();
-
+  kalmanZ.setAngle(0);
 }
 
 
 void loop()
 {
-	dt = (float) (timer - micros())/1000000;
-	timer = micros();
+//  if (firstLoop) {
+  //  dt = (double)(micros()/1000000) - startTime;
+  //  prevTime = startTime + dt;
+  //  firstLoop = false;
+//  }else {
+    dt = ((double)micros())/1000000 - prevTime;
+    prevTime = ((double)micros())/1000000;
+  //}
+	
 	mpu.readRegisters();
 	float calFl,calFr,calSf,calSb;
-	mpu.getRPY(mag[0],mag[1],mag[2]);
-//	Serial.print(mag[0]);
-//	Serial.print(" ");
-//	Serial.print(mag[1]);
-//	Serial.print(" ");
-	Serial.print(mag[2]);
-	Serial.print(" ");
-	Serial.println();
+  //mpu.getMag(mag);
+	mpu.getGyro(gyr);
+ mpu.getRPY(roll,pitch,yaw);
+ angle += gyr[2] * dt;
+
+	//Serial.print(gyr[0]);
+	//Serial.print(" ");
+	//Serial.print(gyr[1]);
+	//Serial.print(" ");
+	Serial.println(yaw,6);
+	//Serial.print(" ");
+    //Serial.print(angle);
+  //Serial.print(" ");
+	//Serial.println();
 
 	//		Serial.print(ultrasonic.getDistance());
 	//		Serial.print(" ");
@@ -79,7 +103,7 @@ void loop()
 //	Serial.println();
 
 
-	delay(100);
+	delay(10);
 }
 
 //float medianFilter(float cal, int type)
