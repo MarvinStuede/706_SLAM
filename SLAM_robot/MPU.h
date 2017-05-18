@@ -14,7 +14,7 @@
 #include "quaternionFilters.h"
 #define AHRS true         // Set to false for basic data read
 #define SerialDebug true  // Set to true to get Serial output for debugging
-
+#define AK8963_ADDRESS   0x0C
 class MPU {
 public:
 	MPU();

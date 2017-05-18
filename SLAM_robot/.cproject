@@ -33,7 +33,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master/src}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.2141653048" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
 							</tool>
@@ -53,7 +54,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master/src}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.824945355" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
 							</tool>
@@ -73,7 +75,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SPI/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/Sparkfun_MPU-9250/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SLAM_robot/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master/src}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.652287467" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
 							</tool>

@@ -9,6 +9,10 @@
 
 MobilePlatform::MobilePlatform() {
 	speed_ = 0;
+	speedFrontLeft_ = 0;
+	speedFrontRight_ = 0;
+	speedBackLeft_ = 0;
+	speedBackRight_ = 0;
 
 }
 
@@ -42,6 +46,13 @@ void MobilePlatform::moveRight() {
 	  motorBackLeft_.writeMicroseconds(1500 - speed_);
 	  motorBackRight_.writeMicroseconds(1500 - speed_);
 	  motorFrontRight_.writeMicroseconds(1500 + speed_);
+}
+
+void MobilePlatform::move() {
+	  motorFrontLeft_.writeMicroseconds(1500 + speedFrontLeft_);
+	  motorBackLeft_.writeMicroseconds(1500 + speedBackLeft_);
+	  motorBackRight_.writeMicroseconds(1500 - speedBackRight_);
+	  motorFrontRight_.writeMicroseconds(1500 - speedFrontRight_);
 }
 
 void MobilePlatform::turnLeft() {
@@ -84,6 +95,10 @@ void MobilePlatform::stop() {
 	  motorFrontRight_.writeMicroseconds(1500);
 }
 
+void MobilePlatform::setSpeed(float vx, float vy, float omega) {
+	inverseKinematics(speedFrontLeft_,speedFrontRight_,speedBackLeft_,speedBackRight_,vx,vy,omega);
+
+}
 void MobilePlatform::setSpeed(float speed) {
 	speed_ = speed;
 }
@@ -110,10 +125,10 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {
-	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);
-	dt2 = 1/Rw_ * (vx - vy + (l2_ + l1_) * omega);
-	dt3 = 1/Rw_ * (vx - vy - (l2_ + l1_) * omega);
-	dt4 = 1/Rw_ * (vx + vy + (l2_ + l1_) * omega);
+	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);//Front left
+	dt2 = 1/Rw_ * (vx - vy + (l2_ + l1_) * omega);//Front right
+	dt3 = 1/Rw_ * (vx - vy - (l2_ + l1_) * omega);//Back left
+	dt4 = 1/Rw_ * (vx + vy + (l2_ + l1_) * omega);//Back right
 
 }
 

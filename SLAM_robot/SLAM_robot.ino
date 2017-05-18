@@ -5,6 +5,13 @@
 #include "MPU.h"
 #include "Kalman.h"
 #include "MobilePlatform.h"
+#include "PIDController.h"
+
+enum states{
+	INIT,
+	TURN90,
+	WAIT
+}state_ = INIT;
 
 MPU mpu;
 UltraSonicSensor ultrasonic;
@@ -13,12 +20,14 @@ IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
 IRSensor IR_side_back(SHARP_Ya,A4);
 MobilePlatform robot;
+PIDController pidRotary(0.6,0.00008,0);
 
 Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
 float gyr[3];
 double dt = 0;
+float stepSize = 10;
 
 //float FL[9];
 //float FR[9];
@@ -28,14 +37,13 @@ float angle = 0;
 float kalAngle = 0;
 double startTime = 0;
 double prevTime = 0;
-bool firstLoop = true;
-float roll = 0;
-float pitch = 0;
-float yaw = 0;
+float angleDes = 0;
+float rotError = 0;
+
 
 void setup()
 {
-  prevTime = ((double)micros())/1000000;
+	prevTime = ((double)micros())/1000000;
 	Serial.begin(115200);
 
 	IR_front_left.setup(1.4197,-2.8392);
@@ -45,81 +53,74 @@ void setup()
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
-  kalmanZ.setAngle(0);
+
+
+
 }
 
 
 void loop()
 {
-//  if (firstLoop) {
-  //  dt = (double)(micros()/1000000) - startTime;
-  //  prevTime = startTime + dt;
-  //  firstLoop = false;
-//  }else {
-    dt = ((double)micros())/1000000 - prevTime;
-    prevTime = ((double)micros())/1000000;
-  //}
-	
-	mpu.readRegisters();
-	float calFl,calFr,calSf,calSb;
-<<<<<<< HEAD
-  //mpu.getMag(mag);
+
+	mpu.readRegisters(); //DO NOT DELETE
+	dt = ((double)micros())/1000000 - prevTime;
+	prevTime = ((double)micros())/1000000;
 	mpu.getGyro(gyr);
- mpu.getRPY(roll,pitch,yaw);
- angle += gyr[2] * dt;
+	angle += gyr[2] * dt;
+	rotError = angleDes - angle;
 
-	//Serial.print(gyr[0]);
-	//Serial.print(" ");
-	//Serial.print(gyr[1]);
-	//Serial.print(" ");
-	Serial.println(yaw,6);
-	//Serial.print(" ");
-    //Serial.print(angle);
-  //Serial.print(" ");
-	//Serial.println();
-=======
-	mpu.getRPY(mag[0],mag[1],mag[2]);
-//	Serial.print(mag[0]);
-//	Serial.print(" ");
-//	Serial.print(mag[1]);
-//	Serial.print(" ");
-//	Serial.print(mag[2]);
-//	Serial.print(" ");
-//	Serial.println();
->>>>>>> d16f02be2629dca905779ae0dc0ead89a074abe6
+	switch(state_){
+	case INIT:{
+		state_ = TURN90;
+		break;
+	}
+	case TURN90:{
+		angleDes = 0;
+		rotError = angleDes - angle;
+		if(fabs(rotError) < 3){
+			state_ = WAIT;
+		}
+		break;
+	}
+	case WAIT:{
+		break;
+	}
+	}
 
-  	Serial.print(ultrasonic.getDistance());
-//		Serial.print(" ");
-		Serial.println();
 
-//	Serial.print("IR_fl: ");
-//	calFl = IR_front_left.getValue(LINEAR);
-//  Serial.print(calFl);
-//  Serial.print( IR_front_right.movingMedianFilter(calFl) );
-//	Serial.print(medianFilter(calFl,1));
+	float omega = pidRotary.getControlVar(rotError,dt);
 
-//	Serial.print(", IR_fr: ");
-//	calFr = IR_front_right.getValue(LINEAR);
-//  Serial.print(calFr);
-//  Serial.print( IR_front_right.movingMedianFilter(calFr) );
-//  erial.print(medianFilter(calFr,2));
-
-//	Serial.print(", IR_sf: ");
-//	calSf = IR_side_front.getValue(LINEAR);
-//  Serial.print(calSf);
-//  Serial.print( IR_side_front.movingMedianFilter(calSf) );
-//	Serial.print(medianFilter(calSf,3));
-
-//	Serial.print(", IR_sb: ");
-//	calSb = IR_side_back.getValue(EXPONENTIAL);
-//  Serial.print(calSb);
-//  Serial.print( IR_side_back.movingMedianFilter(calSb) );
-//	Serial.print(medianFilter(calSb,4));
-
-	Serial.println();
+	robot.setSpeed(0,0,omega);
+	robot.move();
 
 
 	delay(10);
+
+
+	//	Serial.print("IR_fl: ");
+	//	calFl = IR_front_left.getValue(LINEAR);
+	//  Serial.print(calFl);
+	//  Serial.print( IR_front_right.movingMedianFilter(calFl) );
+	//	Serial.print(medianFilter(calFl,1));
+
+	//	Serial.print(", IR_fr: ");
+	//	calFr = IR_front_right.getValue(LINEAR);
+	//  Serial.print(calFr);
+	//  Serial.print( IR_front_right.movingMedianFilter(calFr) );
+	//  erial.print(medianFilter(calFr,2));
+
+	//	Serial.print(", IR_sf: ");
+	//	calSf = IR_side_front.getValue(LINEAR);
+	//  Serial.print(calSf);
+	//  Serial.print( IR_side_front.movingMedianFilter(calSf) );
+	//	Serial.print(medianFilter(calSf,3));
+
+	//	Serial.print(", IR_sb: ");
+	//	calSb = IR_side_back.getValue(EXPONENTIAL);
+	//  Serial.print(calSb);
+	//  Serial.print( IR_side_back.movingMedianFilter(calSb) );
+	//	Serial.print(medianFilter(calSb,4));
+
 }
 
 //float medianFilter(float cal, int type)

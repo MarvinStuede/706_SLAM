@@ -77,6 +77,11 @@
 			<location>/home/marvin/arduino-1.8.2/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library</location>
 		</link>
 		<link>
+			<name>libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master</name>
+			<type>2</type>
+			<location>/home/marvin/arduino-1.8.2/libraries/SparkFun_MPU-9250_Breakout_Arduino_Library-master</location>
+		</link>
+		<link>
 			<name>libraries/Sparkfun_MPU-9250</name>
 			<type>2</type>
 			<location>/home/marvin/arduino-1.8.2/libraries/Sparkfun_MPU-9250</location>
