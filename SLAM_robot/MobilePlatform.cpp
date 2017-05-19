@@ -7,12 +7,15 @@
 
 #include "MobilePlatform.h"
 
-MobilePlatform::MobilePlatform() {
+MobilePlatform::MobilePlatform():
+pidWallDist_(0.5,0.0001,0),
+pidWallRot_(5,0,0){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
 	speedBackLeft_ = 0;
 	speedBackRight_ = 0;
+	stepSize_ = 0;
 
 }
 
@@ -121,6 +124,44 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 	    if (Lipo_level_cal < 0) return false;
 	  }
 	  return false;
+}
+
+bool MobilePlatform::approachWall(float distance, float* IRValues, float threshold, float& vx, float& vy, float& omega,
+		bool toSide) {
+	float fl = IRValues[0];
+	float fr = IRValues[1];
+	float sf = IRValues[2];
+	float sb = IRValues[3];
+	float error_dist = 0;
+	float error_rot = 0;
+	if(toSide){
+		error_dist = (sb + sf)/2 - distance;
+		error_rot = atan2((sf-sb)/100,2*l1_) * 90/M_PI;
+		vy = - pidWallDist_.getControlVar(error_dist,stepSize_);
+		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+	}
+	else{
+
+	error_dist = (fl + fr)/2 - distance;
+	error_rot = atan2((fr-fl)/100,2*l1_) * 90/M_PI;
+
+
+
+	if (fabs(error_dist/distance) < threshold && fabs(error_rot) < threshold && false){
+		pidWallDist_.reset();
+		pidWallRot_.reset();
+		return true;
+	}
+	else{
+		vx = pidWallDist_.getControlVar(error_dist,stepSize_);
+		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+		return false;
+	}
+	}
+}
+
+void MobilePlatform::setStepSize(float stepSize) {
+	stepSize_ = stepSize;
 }
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,

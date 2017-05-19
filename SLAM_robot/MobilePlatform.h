@@ -7,6 +7,7 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <LightChrono.h>
+#include "PIDController.h"
 
 #ifndef MOBILEPLATFORM_H_
 #define MOBILEPLATFORM_H_
@@ -29,6 +30,8 @@ public:
 	void setSpeed(float vx, float vy, float omega);
 	void setSpeed(float speed);
 	bool isBatteryVoltageTooLow();
+	bool approachWall(float distance, float* IRValues, float threshold, float& vx, float& vy, float& omega, bool toSide = false);
+	void setStepSize(float stepSize);
 private:
 	static const byte pinLeftFront_ = 46;
 	static const byte pinLeftBack_ = 47;
@@ -42,11 +45,14 @@ private:
 	Servo motorBackLeft_;
 	Servo motorBackRight_;
 	LightChrono chronoBattery_;
+	PIDController pidWallDist_;
+	PIDController pidWallRot_;
 	float speed_;
 	float speedFrontLeft_;
 	float speedFrontRight_;
 	float speedBackLeft_;
 	float speedBackRight_;
+	float stepSize_;
 
 	void inverseKinematics(float &dt1,float &dt2,float &dt3,float &dt4,float vx, float vy, float omega);
 };

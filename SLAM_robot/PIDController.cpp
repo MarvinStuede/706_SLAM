@@ -19,11 +19,8 @@ PIDController::PIDController(float Kp, float Ki, float Kd) {
 float PIDController::getControlVar(float error,float stepSize) {
 	errorSum_ += error;
 	Ta_ = 1/stepSize;
-	float u = error*Kp_ + Ki_ * Ta_ * errorSum_ +Kd_/Ta_ * (error - errorOld_);
+	float u = error * Kp_ + Ki_ * Ta_ * errorSum_ +Kd_/Ta_ * (error - errorOld_);
 	errorOld_ = error;
-	Serial.print(error,6);
-	Serial.print(" ");
-	Serial.println();
 	return u;
 }
 
@@ -32,5 +29,6 @@ PIDController::~PIDController() {
 
 void PIDController::reset() {
 	errorSum_ = 0;
+	errorOld_ = 0;
 }
 

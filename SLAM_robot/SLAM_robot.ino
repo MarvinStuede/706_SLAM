@@ -39,6 +39,10 @@ double startTime = 0;
 double prevTime = 0;
 float angleDes = 0;
 float rotError = 0;
+float IRValues[4];
+float ctrlVx = 0;
+float ctrlVy = 0;
+float ctrlOmega = 0;
 
 
 void setup()
@@ -53,57 +57,62 @@ void setup()
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
-
-
-
 }
 
 
 void loop()
 {
-
+if(!robot.isBatteryVoltageTooLow()){
 	mpu.readRegisters(); //DO NOT DELETE
 	dt = ((double)micros())/1000000 - prevTime;
 	prevTime = ((double)micros())/1000000;
+
+	//Read sensors
 	mpu.getGyro(gyr);
 	angle += gyr[2] * dt;
 	rotError = angleDes - angle;
 
+	IRValues[0]= IR_front_left.getValue(LINEAR);
+	IRValues[1] = IR_front_right.getValue(LINEAR);
+	IRValues[2]= IR_side_front.getValue(LINEAR);
+	IRValues[3] = IR_side_back.getValue(LINEAR);
+	robot.setStepSize(dt);
+
 	switch(state_){
 	case INIT:{
-		state_ = TURN90;
+		state_ = WAIT;
 		break;
 	}
 	case TURN90:{
 		angleDes = 0;
 		rotError = angleDes - angle;
+		ctrlOmega = pidRotary.getControlVar(rotError,dt);
 		if(fabs(rotError) < 3){
 			state_ = WAIT;
+			ctrlOmega = 0;
+			ctrlVx = 0;
+			ctrlVy = 0;
 		}
 		break;
 	}
 	case WAIT:{
+		robot.approachWall(15,IRValues,0.5,ctrlVx,ctrlVy,ctrlOmega);
+		ctrlVy = 2.5;
 		break;
 	}
 	}
-
-
-	float omega = pidRotary.getControlVar(rotError,dt);
-
-	robot.setSpeed(0,0,omega);
+//	Serial.print(ctrlVx);
+//	Serial.print(" ");
+	//Serial.print(ctrlOmega);
+	//Serial.print(" ");
+	Serial.println();
+	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 	robot.move();
 
 
 	delay(10);
 
-
-	//	Serial.print("IR_fl: ");
-	//	calFl = IR_front_left.getValue(LINEAR);
-	//  Serial.print(calFl);
-	//  Serial.print( IR_front_right.movingMedianFilter(calFl) );
-	//	Serial.print(medianFilter(calFl,1));
-
-	//	Serial.print(", IR_fr: ");
+		//	Serial.print(", IR_fr: ");
 	//	calFr = IR_front_right.getValue(LINEAR);
 	//  Serial.print(calFr);
 	//  Serial.print( IR_front_right.movingMedianFilter(calFr) );
@@ -120,7 +129,9 @@ void loop()
 	//  Serial.print(calSb);
 	//  Serial.print( IR_side_back.movingMedianFilter(calSb) );
 	//	Serial.print(medianFilter(calSb,4));
-
+}
+else
+	Serial.println("VOLTAGE TOO LOW");
 }
 
 //float medianFilter(float cal, int type)
