@@ -2,7 +2,7 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2017-05-23 12:23:30
+//This file has been generated on 2017-05-23 12:31:50
 
 #include "Arduino.h"
 #include "Arduino.h"
@@ -17,6 +17,7 @@
 #include "Util.h"
 void setup() ;
 void loop() ;
+bool turnAngle(float angleGoal, float threshold);
 
 #include "SLAM_robot.ino"
 

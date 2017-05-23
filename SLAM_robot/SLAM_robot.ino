@@ -138,7 +138,9 @@ if(!robot.isBatteryVoltageTooLow()){
 		break;
 	}
 	case STATE_WAIT:{
-
+		ctrlVx = 0;
+		ctrlVy = 0;
+		ctrlOmega = 0;
 		break;
 	}
 	}
@@ -175,6 +177,16 @@ else
 	Serial.println("VOLTAGE TOO LOW");
 }
 
+bool turnAngle(float angleGoal, float threshold){
+	float e = angleGoal - angle;
+	ctrlOmega = pidRotary.getControlVar(e,dt);
+	if(fabs(e) < threshold){
+		ctrlOmega = 0;
+		return true;
+	}
+	else
+		return false;
+}
 //float medianFilter(float cal, int type)
 //{
 //  //Size of 9
