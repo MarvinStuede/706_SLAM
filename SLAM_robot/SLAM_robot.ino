@@ -155,95 +155,26 @@ if(!robot.isBatteryVoltageTooLow()){
 
 	delay(10);
 
-		//	Serial.print(", IR_fr: ");
-	//	calFr = IR_front_right.getValue(LINEAR);
-	//  Serial.print(calFr);
-	//  Serial.print( IR_front_right.movingMedianFilter(calFr) );
-	//  erial.print(medianFilter(calFr,2));
-
-	//	Serial.print(", IR_sf: ");
-	//	calSf = IR_side_front.getValue(LINEAR);
-	//  Serial.print(calSf);
-	//  Serial.print( IR_side_front.movingMedianFilter(calSf) );
-	//	Serial.print(medianFilter(calSf,3));
-
-	//	Serial.print(", IR_sb: ");
-	//	calSb = IR_side_back.getValue(EXPONENTIAL);
-	//  Serial.print(calSb);
-	//  Serial.print( IR_side_back.movingMedianFilter(calSb) );
-	//	Serial.print(medianFilter(calSb,4));
 }
 else
 	Serial.println("VOLTAGE TOO LOW");
 }
-
-//float medianFilter(float cal, int type)
-//{
-//  //Size of 9
-//  float arrayofcal[9];
-//  float holder;
-//
-//  switch(type) {
-//    case 1:
-//      arrayofcal = FL;
-//      break;
-//    case 2:
-//      arrayofcal = FR;
-//      break;
-//    case 3:
-//      arrayofcal = SF;
-//      break;
-//    case 4:
-//      arrayofcal = SB;
-//      break;
-//  }
-//  
-//  for (i = 1; i < 9; i++) {
-//    arrayofcal[i-1] = arrayofcal[i];
-//  }
-//  arrayofcal[8] = cal;
-//
-//  //Sorting
-//  for(x = 0; x < 8; x++) {
-//   for(y = 0; y < 8-(x+1); y++) {
-//     if(arrayofcal[y] > arrayofcal[y+1]) {
-//       holder = arrayofcal[y+1];
-//       arrayofcal[y+1] = arrayofcal[y];
-//       arrayofcal[y] = holder;
-//     }
-//   }
-//  }
-//
-//  switch(type) {
-//    case 1:
-//      FL = arrayofcal;
-//      break;
-//    case 2:
-//      FR = arrayofcal;
-//      break;
-//    case 3:
-//      SF = arrayofcal;
-//      break;
-//    case 4:
-//      SB = arrayofcal;
-//      break;
-//  }
-//  return arrayofcal[4];
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+bool turnAngle(float angleGoal, float threshold){
+ 	float e = angleGoal - angle;
+ 	ctrlOmega = pidRotary.getControlVar(e,dt);
+ 	if(fabs(e) < threshold){
+ 		ctrlOmega = 0;
+ 		return true;
+ 	}
+ 	else
+ 		return false;
+ }
+inline float rad2deg(float radVal){
+	return radVal * 90/M_PI;
+}
+inline float deg2rad(float degVal){
+	return degVal * M_PI/90;
+}
 
 
 

@@ -127,12 +127,8 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 	  return false;
 }
 
-bool MobilePlatform::approachWall(float distance, float* IRValues, float threshold, float& vx, float& vy, float& omega,
+bool MobilePlatform::approachWall(float distance, float threshold, float& vx, float& vy, float& omega,
 		bool toSide) {
-	float fl = IRValues[0];
-	float fr = IRValues[1];
-	float sf = IRValues[2];
-	float sb = IRValues[3];
 	float error_dist = 0;
 	float error_rot = 0;
 	if(toSide){
