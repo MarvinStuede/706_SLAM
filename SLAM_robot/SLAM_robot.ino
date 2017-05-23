@@ -25,8 +25,8 @@ MPU mpu;
 UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
-IRSensor IR_side_front(SHARP_Ya,A3);
-IRSensor IR_side_back(SHARP_Ya,A4);
+IRSensor IR_side_front(SHARP_YA,A3);
+IRSensor IR_side_back(SHARP_YA,A4);
 MobilePlatform robot;
 LightChrono chrono_;
 PIDController pidRotary(0.6,0.0001,0);
@@ -93,9 +93,9 @@ if(!robot.isBatteryVoltageTooLow()){
 	case STATE_INIT:{
 		switch(stateInit_){
 		case INIT_SPIN:{
-			ctrlOmega = 60;
+			ctrlOmega = 20;
 			//Spin until wall to left found
-			if(rad2deg(robot.getIRAngle(true)) < 5 && robot.getIRMidDist(true) < 50){
+			if(fabs(rad2deg(robot.getIRAngle(true))) < 5 && robot.getIRMidDist(true) < 50){
 				stateInit_ = INIT_APP_WALL_1;
 				ctrlOmega = 0;
 			}
@@ -103,7 +103,7 @@ if(!robot.isBatteryVoltageTooLow()){
 		}
 		case INIT_APP_WALL_1:{
 			//Approach wall to side
-			if(robot.approachWall(15,0.5,ctrlVx,ctrlVy,ctrlOmega,true))
+			if(robot.approachWall(25,0.5,ctrlVx,ctrlVy,ctrlOmega,true))
 				stateInit_ = INIT_APP_WALL_2;
 			break;
 		}
@@ -146,7 +146,7 @@ if(!robot.isBatteryVoltageTooLow()){
 	}
 //	Serial.print(ctrlVx);
 //	Serial.print(" ");
-	Serial.print(ctrlOmega);
+	Serial.print(rad2deg(robot.getIRAngle(true)));
 	Serial.print(" ");
 	Serial.println();
 	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);

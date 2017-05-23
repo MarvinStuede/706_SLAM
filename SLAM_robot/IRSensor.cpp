@@ -26,8 +26,8 @@ float IRSensor::getValue(corrType type) {
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
 	readVal = movingMedianFilter(read(type_, pin_));
-    readVal = read(type_, pin_);
-    oldDist_ = readVal;
+	readVal = read(type_,pin_);
+	oldDist_ = getCorrectLinear(readVal);
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
 		}
@@ -127,8 +127,8 @@ float IRSensor::read(SHARP which_one, int which_analog_pin) {
 			return 150.1;
 		if (temp_dis >= 0.0 && temp_dis <= 20.0)
 			return 19.9;
-		if (temp_dis > 150.0)
-			return 150.1;
+		if (temp_dis > 90.0)
+			return 90.1;
 		return temp_dis;
 		break;
 	}
