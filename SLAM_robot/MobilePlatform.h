@@ -35,6 +35,7 @@ public:
 	void setStepSize(float stepSize);
 	float getIRAngle(bool side);
 	float getIRMidDist(bool side);
+//bool objectAvoidance(float* IRvalues, float threshold, float& vx, float& vy, float& omega);
 private:
 	static const byte pinLeftFront_ = 46;
 	static const byte pinLeftBack_ = 47;
@@ -62,6 +63,7 @@ private:
 	float speedBackRight_;
 	float stepSize_;
 
+	int avoidanceState; //Records the state of the object avoidance function;
 
 	void inverseKinematics(float &dt1,float &dt2,float &dt3,float &dt4,float vx, float vy, float omega);
 };

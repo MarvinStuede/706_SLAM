@@ -10,8 +10,8 @@
 #ifndef ULTRASONICSENSOR_H_
 #define ULTRASONICSENSOR_H_
 
-#define TRIGGER_PIN  48  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     49  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define TRIGGER_PIN  38  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     39  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define MAX_DISTANCE 400
 
 class UltraSonicSensor {

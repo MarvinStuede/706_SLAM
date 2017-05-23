@@ -17,6 +17,7 @@ pidWallRot_(5,0,0){
 	speedBackRight_ = 0;
 	stepSize_ = 0;
 
+	avoidanceState = 0; //No obstacle avoidance required at beginning (state 0);
 }
 
 MobilePlatform::~MobilePlatform() {
@@ -126,9 +127,12 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 	  return false;
 }
 
-bool MobilePlatform::approachWall(float distance, float threshold, float& vx, float& vy, float& omega,
+bool MobilePlatform::approachWall(float distance, float* IRValues, float threshold, float& vx, float& vy, float& omega,
 		bool toSide) {
-
+	float fl = IRValues[0];
+	float fr = IRValues[1];
+	float sf = IRValues[2];
+	float sb = IRValues[3];
 	float error_dist = 0;
 	float error_rot = 0;
 	if(toSide){
@@ -156,11 +160,35 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	}
 	}
 }
+/*bool MobilePlatform::objectAvoidance(float* IRvalues, float threshold, float& vx, float& vy, float& omega) {
+	//An object is in front of the right IR sensor or the object avoidance was previously running
+	if ((IRValues[1] < threshold)) {
+		avoidanceState = 1;
+	}
 
+	switch (avoidanceState)
+	{
+	case 1: {
+		//stop the car
+		vx = 0;
+		vy = 0;
+	}
+	break;
+	default:
+		break;
+	}
+
+	if (avoidanceState == 0) {
+		return false; //Not necessary to carry out avoidance
+	}
+	else {
+		return true; //obstacle avoidance is needed
+	}
+}
+*/
 void MobilePlatform::setStepSize(float stepSize) {
 	stepSize_ = stepSize;
 }
-
 float MobilePlatform::getIRAngle(bool side) {
 	if(side)
 		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 90/M_PI;
@@ -181,7 +209,6 @@ float MobilePlatform::getIRMidDist(bool side) {
 	else
 		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
-
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {
 	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);//Front left
