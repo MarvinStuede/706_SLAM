@@ -6,12 +6,20 @@
 #include "Kalman.h"
 #include "MobilePlatform.h"
 #include "PIDController.h"
+#include "LightChrono.h"
+#include "Util.h"
 
-enum states{
-	INIT,
-	TURN90,
-	WAIT
-}state_ = INIT;
+enum statesMain{
+	STATE_INIT,
+	STATE_TURN90,
+	STATE_WAIT
+}stateMain_ = STATE_INIT;
+
+enum statesInit{
+	INIT_SPIN,
+	INIT_APP_WALL_1,
+	INIT_APP_WALL_2
+}stateInit_ = INIT_SPIN;
 
 MPU mpu;
 UltraSonicSensor ultrasonic;
@@ -20,7 +28,8 @@ IRSensor IR_front_right(SHARP_DX,A2);
 IRSensor IR_side_front(SHARP_Ya,A3);
 IRSensor IR_side_back(SHARP_Ya,A4);
 MobilePlatform robot;
-PIDController pidRotary(0.6,0.00008,0);
+LightChrono chrono_;
+PIDController pidRotary(0.6,0.0001,0);
 
 Kalman kalmanZ;
 uint32_t timer;
@@ -37,7 +46,7 @@ float angle = 0;
 float kalAngle = 0;
 double startTime = 0;
 double prevTime = 0;
-float angleDes = 0;
+float angleDes = 90;
 float rotError = 0;
 float IRValues[4];
 float ctrlVx = 0;
@@ -57,6 +66,7 @@ void setup()
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
+	chrono_.start();
 }
 
 
@@ -76,35 +86,66 @@ if(!robot.isBatteryVoltageTooLow()){
 	IRValues[1] = IR_front_right.getValue(LINEAR);
 	IRValues[2]= IR_side_front.getValue(LINEAR);
 	IRValues[3] = IR_side_back.getValue(LINEAR);
+	robot.giveSensorVals(IRValues);
 	robot.setStepSize(dt);
 
-	switch(state_){
-	case INIT:{
-		state_ = WAIT;
+	switch(stateMain_){
+	case STATE_INIT:{
+		switch(stateInit_){
+		case INIT_SPIN:{
+			ctrlOmega = 60;
+			//Spin until wall to left found
+			if(rad2deg(robot.getIRAngle(true)) < 5 && robot.getIRMidDist(true) < 50){
+				stateInit_ = INIT_APP_WALL_1;
+				ctrlOmega = 0;
+			}
+			break;
+		}
+		case INIT_APP_WALL_1:{
+			//Approach wall to side
+			if(robot.approachWall(15,0.5,ctrlVx,ctrlVy,ctrlOmega,true))
+				stateInit_ = INIT_APP_WALL_2;
+			break;
+		}
+		case INIT_APP_WALL_2:{
+				//Keep distance to wall and drive forwards
+				robot.approachWall(15,0.5,ctrlVx,ctrlVy,ctrlOmega,true);
+				ctrlVx = 2.5;
+				if(ultrasonic.getDistance() <= 15){
+					ctrlVx = 0;
+					ctrlVy = 0;
+					ctrlOmega = 0;
+					stateMain_ = STATE_WAIT;
+				}
+			break;
+		}
+		}
+
 		break;
 	}
-	case TURN90:{
-		angleDes = 0;
+	case STATE_TURN90:{
+
 		rotError = angleDes - angle;
 		ctrlOmega = pidRotary.getControlVar(rotError,dt);
-		if(fabs(rotError) < 3){
-			state_ = WAIT;
+		if(fabs(rotError) < 5){
+			stateMain_ = STATE_WAIT;
 			ctrlOmega = 0;
 			ctrlVx = 0;
 			ctrlVy = 0;
+			angleDes += 90;
+			chrono_.restart();
 		}
 		break;
 	}
-	case WAIT:{
-		robot.approachWall(15,IRValues,0.5,ctrlVx,ctrlVy,ctrlOmega);
-		ctrlVy = 2.5;
+	case STATE_WAIT:{
+
 		break;
 	}
 	}
 //	Serial.print(ctrlVx);
 //	Serial.print(" ");
-	//Serial.print(ctrlOmega);
-	//Serial.print(" ");
+	Serial.print(ctrlOmega);
+	Serial.print(" ");
 	Serial.println();
 	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 	robot.move();

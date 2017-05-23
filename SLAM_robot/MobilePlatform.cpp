@@ -126,24 +126,21 @@ bool MobilePlatform::isBatteryVoltageTooLow() {
 	  return false;
 }
 
-bool MobilePlatform::approachWall(float distance, float* IRValues, float threshold, float& vx, float& vy, float& omega,
+bool MobilePlatform::approachWall(float distance, float threshold, float& vx, float& vy, float& omega,
 		bool toSide) {
-	float fl = IRValues[0];
-	float fr = IRValues[1];
-	float sf = IRValues[2];
-	float sb = IRValues[3];
+
 	float error_dist = 0;
 	float error_rot = 0;
 	if(toSide){
-		error_dist = (sb + sf)/2 - distance;
-		error_rot = atan2((sf-sb)/100,2*l1_) * 90/M_PI;
+		error_dist = getIRMidDist(true) - distance;
+		error_rot = getIRAngle(true) * 90/M_PI;
 		vy = - pidWallDist_.getControlVar(error_dist,stepSize_);
 		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
 	}
 	else{
 
-	error_dist = (fl + fr)/2 - distance;
-	error_rot = atan2((fr-fl)/100,2*l1_) * 90/M_PI;
+	error_dist = getIRMidDist(false) - distance;
+	error_rot = getIRAngle(false) * 90/M_PI;
 
 
 
@@ -162,6 +159,27 @@ bool MobilePlatform::approachWall(float distance, float* IRValues, float thresho
 
 void MobilePlatform::setStepSize(float stepSize) {
 	stepSize_ = stepSize;
+}
+
+float MobilePlatform::getIRAngle(bool side) {
+	if(side)
+		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 90/M_PI;
+	else
+		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) * 90/M_PI;
+}
+
+void MobilePlatform::giveSensorVals(float* IRValues) {
+	IRDistFrontLeft_ = IRValues[0];
+	IRDistFrontRight_ = IRValues[1];
+	IRDistSideFront_ = IRValues[2];
+	IRDistSideBack_ = IRValues[3];
+}
+
+float MobilePlatform::getIRMidDist(bool side) {
+	if(side)
+		return (IRDistSideFront_ + IRDistSideBack_)/2;
+	else
+		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
