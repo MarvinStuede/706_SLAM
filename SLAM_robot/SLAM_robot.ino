@@ -11,14 +11,14 @@ enum states{
 	INIT,
 	TURN90,
 	WAIT
-}state_ = INIT;
+}state_;
 
 MPU mpu;
 UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
 IRSensor IR_front_right(SHARP_DX,A2);
-IRSensor IR_side_front(SHARP_Ya,A3);
-IRSensor IR_side_back(SHARP_Ya,A4);
+IRSensor IR_side_front(SHARP_YA,A3);
+IRSensor IR_side_back(SHARP_YA,A4);
 MobilePlatform robot;
 PIDController pidRotary(0.6,0.00008,0);
 
@@ -52,17 +52,18 @@ void setup()
 
 	IR_front_left.setup(1.4197,-2.8392);
 	IR_front_right.setup(1.1074,-0.4708);
-	IR_side_front.setup(2.0813,-16.074);
-	IR_side_back.setup(0.218,1.5159);
+	IR_side_front.setup(1.4239,-3.4408);
+	IR_side_back.setup(1.5945,-7.1103);
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
+	state_ = INIT;
 }
 
 
 void loop()
 {
-if(!robot.isBatteryVoltageTooLow()){
+	if(!robot.isBatteryVoltageTooLow()){
 	mpu.readRegisters(); //DO NOT DELETE
 	dt = ((double)micros())/1000000 - prevTime;
 	prevTime = ((double)micros())/1000000;
@@ -72,6 +73,7 @@ if(!robot.isBatteryVoltageTooLow()){
 	angle += gyr[2] * dt;
 	rotError = angleDes - angle;
 
+	//Read IR sensors
 	IRValues[0]= IR_front_left.getValue(LINEAR);
 	IRValues[1] = IR_front_right.getValue(LINEAR);
 	IRValues[2]= IR_side_front.getValue(LINEAR);
@@ -132,79 +134,6 @@ if(!robot.isBatteryVoltageTooLow()){
 }
 else
 	Serial.println("VOLTAGE TOO LOW");
+	
 }
-
-//float medianFilter(float cal, int type)
-//{
-//  //Size of 9
-//  float arrayofcal[9];
-//  float holder;
-//
-//  switch(type) {
-//    case 1:
-//      arrayofcal = FL;
-//      break;
-//    case 2:
-//      arrayofcal = FR;
-//      break;
-//    case 3:
-//      arrayofcal = SF;
-//      break;
-//    case 4:
-//      arrayofcal = SB;
-//      break;
-//  }
-//  
-//  for (i = 1; i < 9; i++) {
-//    arrayofcal[i-1] = arrayofcal[i];
-//  }
-//  arrayofcal[8] = cal;
-//
-//  //Sorting
-//  for(x = 0; x < 8; x++) {
-//   for(y = 0; y < 8-(x+1); y++) {
-//     if(arrayofcal[y] > arrayofcal[y+1]) {
-//       holder = arrayofcal[y+1];
-//       arrayofcal[y+1] = arrayofcal[y];
-//       arrayofcal[y] = holder;
-//     }
-//   }
-//  }
-//
-//  switch(type) {
-//    case 1:
-//      FL = arrayofcal;
-//      break;
-//    case 2:
-//      FR = arrayofcal;
-//      break;
-//    case 3:
-//      SF = arrayofcal;
-//      break;
-//    case 4:
-//      SB = arrayofcal;
-//      break;
-//  }
-//  return arrayofcal[4];
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
