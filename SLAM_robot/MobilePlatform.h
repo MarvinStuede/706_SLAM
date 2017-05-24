@@ -17,7 +17,7 @@ public:
 	MobilePlatform();
 	virtual ~MobilePlatform();
 	void setup();
-	void giveSensorVals(float* IRValues);
+	void giveSensorVals(float* IRValues, float usDistance);
 	void moveForward();
 	void moveLeft();
 	void moveBackward();
@@ -35,7 +35,7 @@ public:
 	void setStepSize(float stepSize);
 	float getIRAngle(bool side);
 	float getIRMidDist(bool side);
-//bool objectAvoidance(float* IRvalues, float threshold, float& vx, float& vy, float& omega);
+	bool objectAvoidance(float thresholdFront, float thresholdSide, float& vx, float& vy, float& omega);
 private:
 	static const byte pinLeftFront_ = 46;
 	static const byte pinLeftBack_ = 47;
@@ -49,6 +49,7 @@ private:
 	float IRDistFrontRight_ = 0;
 	float IRDistSideFront_ = 0;
 	float IRDistSideBack_ = 0;
+	float usDistFront_ = 0;
 	Servo motorFrontLeft_;
 	Servo motorFrontRight_;
 	Servo motorBackLeft_;

@@ -51,6 +51,7 @@ float angleDes = 0;
 float distWall = 0;
 float rotError = 0;
 float IRValues[4];
+float usDistance;
 float ctrlVx = 0;
 float ctrlVy = 0;
 float ctrlOmega = 0;
@@ -97,25 +98,32 @@ void loop()
 		rotError = angleDes - angle;
 		distWall = 25;
 
+		//Store IRvalues
 		IRValues[0] = IR_front_left.getValue(LINEAR);
 		IRValues[1] = IR_front_right.getValue(LINEAR);
 		IRValues[2] = IR_side_front.getValue(LINEAR);
 		IRValues[3] = IR_side_back.getValue(LINEAR);
-		robot.giveSensorVals(IRValues);
+		//Store ultrasonic distance
+		usDistance = ultrasonic.getDistance();
+
+		robot.giveSensorVals(IRValues, usDistance);
 		robot.setStepSize(dt);
-		Serial1.println(robot.getIRAngle(true));
+		//Serial1.println(robot.getIRAngle(true));
+		//Serial.print(IRValues[0]);
+		//Serial.print(" ");
+		//Serial.println(IRValues[1]);
 
 
-		if (fabs(distWall - robot.getIRMidDist(true)) < 2) {
+		//if (fabs(distWall - robot.getIRMidDist(true)) < 2) {
 			ctrlOmega = pidRotary.getControlVar(rotError, dt);
 			ctrlVy = 0;
 			ctrlVx = 3;
-		}
+		/*}
 		else {
 			ctrlOmega = 0;
 			ctrlVy = pidSide.getControlVar(distWall - robot.getIRMidDist(true), dt);
 			ctrlVx = 3;
-		}
+		}*/
 		/*
 		switch (stateMain_) {
 		case STATE_INIT: {
@@ -178,8 +186,16 @@ void loop()
 		//Serial.print(" ");
 		//Serial.println();
 		*/
-	//	robot.setSpeed(ctrlVx, ctrlVy, ctrlOmega);
-	//	robot.move();
+			
+	if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
+			Serial1.println("object detected");
+		}
+
+	ctrlOmega = pidRotary.getControlVar(rotError, dt);
+
+
+		robot.setSpeed(ctrlVx, ctrlVy, ctrlOmega);
+		robot.move();
 		
 
 		delay(10);	

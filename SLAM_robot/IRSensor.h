@@ -9,7 +9,7 @@
 #define LIBRARIES_IRSENSOR_IRSENSOR_H_
 #include <Arduino.h>
 #include <LightChrono.h>
-#include "MedianFilter.h"
+//#include "MedianFilter.h"
 
 	typedef enum {
 	  SHARP_DX, //2D120X
