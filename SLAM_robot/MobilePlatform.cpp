@@ -165,47 +165,128 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	}
 	}
 }
-/*bool MobilePlatform::objectAvoidance(float* IRvalues, float threshold, float& vx, float& vy, float& omega) {
-	//An object is in front of the right IR sensor or the object avoidance was previously running
-	if ((IRValues[1] < threshold)) {
-		avoidanceState = 1;
-	}
+
+bool MobilePlatform::objectAvoidance(float thresholdFront, float thresholdSide, float& vx, float& vy, float& omega) {
+
 
 	switch (avoidanceState)
 	{
+	case 0: {
+		//Object is detected by front right sensor only
+		if ((IRDistFrontLeft_ > thresholdFront) && (IRDistFrontRight_ < thresholdFront) && (usDistFront_ > thresholdFront-2)) {
+			avoidanceState = 1;
+		}else if ((IRDistFrontLeft_ > thresholdFront) && (IRDistFrontRight_ > thresholdFront) && (usDistFront_ < thresholdFront - 2)) {
+			avoidanceState = 3;
+		}
+		else if ((IRDistFrontLeft_ < thresholdFront) && (IRDistFrontRight_ > thresholdFront) && (usDistFront_ > thresholdFront - 2)) {
+			avoidanceState = 4;
+		}
+
+		return false; //Not necessary to carry out avoidance
+	}
 	case 1: {
 		//stop the car
 		vx = 0;
 		vy = 0;
+		omega = 0;
+		avoidanceState = 2;
+		break;
 	}
-	break;
+	case 2: {
+		//Move to Right until only sonar sensor detects
+		if ((IRDistFrontLeft_ > thresholdFront) && (IRDistFrontRight_ > thresholdFront) && (usDistFront_ < thresholdFront-2)) {
+			avoidanceState = 3;
+		}
+		vx = 0;
+		vy = 3;
+		omega = 0;
+		break;
+	}
+	case 3: {
+		//Move to the right until only right sensor detects
+		if ((IRDistFrontLeft_ < thresholdFront) && (IRDistFrontRight_ > thresholdFront) && (usDistFront_ > thresholdFront-2)) {
+			avoidanceState = 4;
+		}
+		vx = 0;
+		vy = 3;
+		omega = 0;
+		break;
+	}
+	case 4: {
+		//Move to the right until no sensor detects object
+		if ((IRDistFrontLeft_ > thresholdFront) && (IRDistFrontRight_ > thresholdFront) && (usDistFront_ > thresholdFront-2)) {
+			avoidanceState = 5;
+		}
+		vx = 0;
+		vy = 3;
+		omega = 0;
+		break;
+	}
+	case 5: {
+		//Move forward until front side sensor detects object
+		if ((IRDistSideFront_ < thresholdSide) && (IRDistSideBack_ > thresholdSide)) {
+			avoidanceState = 6;
+		}
+		vx = 3;
+		vy = 0;
+		omega = 0;
+		break;
+	}
+	case 6: {
+		//Move forward until back side sensor detects object
+		if ((IRDistSideFront_ > thresholdSide) && (IRDistSideBack_ < thresholdSide)) {
+			avoidanceState = 7;
+		}
+		vx = 3;
+		vy = 0;
+		omega = 0;
+		break;
+	}
+	case 7: {
+		//Move forward until no side sensor detects object
+		if ((IRDistSideFront_ > thresholdSide) && (IRDistSideBack_ > thresholdSide)) {
+			avoidanceState = 8;
+		}
+		vx = 3;
+		vy = 0;
+		omega = 0;
+		break;
+	}
+	case 8: {
+		vx = 0;
+		vy = 0;
+		omega = 0;
+		avoidanceState = 0;
+		break;
+	}
 	default:
 		break;
 	}
 
-	if (avoidanceState == 0) {
-		return false; //Not necessary to carry out avoidance
-	}
-	else {
-		return true; //obstacle avoidance is needed
-	}
+	
+	return true; //obstacle avoidance is needed
 }
-*/
+
 void MobilePlatform::setStepSize(float stepSize) {
 	stepSize_ = stepSize;
 }
 float MobilePlatform::getIRAngle(bool side) {
-	if(side)
-		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 90/M_PI;
+	if (side)
+		//return atan2((IRDistSideFront_-IRDistSideBack_)/10,irDistSide_) * 90/M_PI;
+	//	return atan((IRDistSideFront_ - IRDistSideBack_)/10)
+		//return (atan2((IRDistSideFront_ - IRDistSideBack_), 10) * 180/ M_PI);
+		return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
 	else
 		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) * 90/M_PI;
+	
 }
 
-void MobilePlatform::giveSensorVals(float* IRValues) {
+void MobilePlatform::giveSensorVals(float* IRValues, float usDistance) {
 	IRDistFrontLeft_ = IRValues[0];
 	IRDistFrontRight_ = IRValues[1];
 	IRDistSideFront_ = IRValues[2];
 	IRDistSideBack_ = IRValues[3];
+	usDistFront_ = usDistance;
 }
 
 float MobilePlatform::getIRMidDist(bool side) {
@@ -214,6 +295,7 @@ float MobilePlatform::getIRMidDist(bool side) {
 	else
 		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
+
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {
 	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);//Front left
