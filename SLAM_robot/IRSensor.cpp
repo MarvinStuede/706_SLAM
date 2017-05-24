@@ -25,8 +25,8 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-	readVal = movingMedianFilter(read(type_, pin_));
-	readVal = read(type_,pin_);
+	readVal = movingAverFilter(read(type_, pin_));
+
 	oldDist_ = getCorrectLinear(readVal);
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
@@ -68,25 +68,25 @@ float IRSensor::movingMedianFilter(float curDistance){
   return (float)recordDistances[4];
 }
 
-//float IRSensor::movingAverFilter(float curDistance){
-//  float sum = 0;
-//  if (numValues < 10) {
-//    recordDistances[numValues] = curDistance;
-//    numValues++;
-//  }else {
-//    for (int i = 1; i < 10; i++) {
-//      recordDistances[i-1] = recordDistances[i];
-//    }
-//
-//    recordDistances[9] = curDistance;
-//  }
-//
-//  for (int i = 0; i < numValues; i++) {
-//    sum += recordDistances[i];
-//  }
-//
-//  return (float)sum/numValues;
-//}
+float IRSensor::movingAverFilter(float curDistance){
+  float sum = 0;
+  if (numValues < 10) {
+    recordDistances[numValues] = curDistance;
+    numValues++;
+  }else {
+    for (int i = 1; i < 10; i++) {
+      recordDistances[i-1] = recordDistances[i];
+    }
+
+    recordDistances[9] = curDistance;
+  }
+
+  for (int i = 0; i < numValues; i++) {
+    sum += recordDistances[i];
+  }
+
+  return (float)sum/numValues;
+}
 
 void IRSensor::setup(float a1, float a2) {
 

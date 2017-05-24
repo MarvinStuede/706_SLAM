@@ -8,8 +8,8 @@
 #include "MobilePlatform.h"
 
 MobilePlatform::MobilePlatform():
-pidWallDist_(0.5,0.0001,0),
-pidWallRot_(5,0,0){
+pidWallDist_(0.7,0.00001,0),
+pidWallRot_(2,0.00001,0){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -134,17 +134,26 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	if(toSide){
 		error_dist = getIRMidDist(true) - distance;
 		error_rot = getIRAngle(true) * 90/M_PI;
-		vy = - pidWallDist_.getControlVar(error_dist,stepSize_);
-		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+		Serial.print(error_rot);
+		Serial.print(" ");
+
+		if (fabs(error_dist) < threshold){
+			pidWallDist_.reset();
+			pidWallRot_.reset();
+			return true;
+		}
+		else{
+			vy = - pidWallDist_.getControlVar(error_dist,stepSize_);
+			omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+			return false;
+		}
 	}
 	else{
 
 	error_dist = getIRMidDist(false) - distance;
 	error_rot = getIRAngle(false) * 90/M_PI;
 
-
-
-	if (fabs(error_dist/distance) < threshold && fabs(error_rot) < threshold && false){
+	if (fabs(error_dist) < threshold){
 		pidWallDist_.reset();
 		pidWallRot_.reset();
 		return true;

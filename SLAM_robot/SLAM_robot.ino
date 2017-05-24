@@ -93,9 +93,9 @@ if(!robot.isBatteryVoltageTooLow()){
 	case STATE_INIT:{
 		switch(stateInit_){
 		case INIT_SPIN:{
-			ctrlOmega = 20;
+			ctrlOmega = 15;
 			//Spin until wall to left found
-			if(fabs(rad2deg(robot.getIRAngle(true))) < 5 && robot.getIRMidDist(true) < 50){
+			if(fabs(rad2deg(robot.getIRAngle(true))) < 10 && robot.getIRMidDist(true) < 50){
 				stateInit_ = INIT_APP_WALL_1;
 				ctrlOmega = 0;
 			}
@@ -103,20 +103,20 @@ if(!robot.isBatteryVoltageTooLow()){
 		}
 		case INIT_APP_WALL_1:{
 			//Approach wall to side
-			if(robot.approachWall(25,0.5,ctrlVx,ctrlVy,ctrlOmega,true))
+			if(robot.approachWall(20,1,ctrlVx,ctrlVy,ctrlOmega,true))
 				stateInit_ = INIT_APP_WALL_2;
 			break;
 		}
 		case INIT_APP_WALL_2:{
 				//Keep distance to wall and drive forwards
-				robot.approachWall(15,0.5,ctrlVx,ctrlVy,ctrlOmega,true);
-				ctrlVx = 2.5;
-				if(ultrasonic.getDistance() <= 15){
-					ctrlVx = 0;
-					ctrlVy = 0;
-					ctrlOmega = 0;
-					stateMain_ = STATE_WAIT;
-				}
+				robot.approachWall(20,1,ctrlVx,ctrlVy,ctrlOmega,true);
+				ctrlVx = 3.5;
+//				if(ultrasonic.getDistance() <= 15){
+//					ctrlVx = 0;
+//					ctrlVy = 0;
+//					ctrlOmega = 0;
+//					stateMain_ = STATE_WAIT;
+//				}
 			break;
 		}
 		}
@@ -144,16 +144,19 @@ if(!robot.isBatteryVoltageTooLow()){
 		break;
 	}
 	}
-//	Serial.print(ctrlVx);
+//	Serial.print(IRValues[2]);
 //	Serial.print(" ");
-	Serial.print(rad2deg(robot.getIRAngle(true)));
-	Serial.print(" ");
+//	Serial.print(IRValues[3]);
+//	Serial.print(" ");
+//	Serial.print(rad2deg(robot.getIRAngle(true)));
+//	Serial.print(" ");
 	Serial.println();
+	ctrlVx=0;
 	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 	robot.move();
 
 
-	delay(10);
+	//delay();
 
 }
 else
