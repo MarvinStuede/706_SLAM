@@ -25,36 +25,41 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-	readVal = movingMedianFilter(read(type_, pin_));
-	readVal = read(type_,pin_);
+	//readVal = movingMedianFilter(read(type_, pin_));
+	readVal = movingAverFilter(read(type_, pin_));
+	//readVal = read(type_,pin_);
 	oldDist_ = getCorrectLinear(readVal);
+	/*
+
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
 		}
 		else if(type == EXPONENTIAL){
 			oldDist_ = getCorrectExp(readVal);
 		}
-
+		*/
 		chrono_.restart();
 	}
 	return oldDist_;
 }
 
 float IRSensor::movingMedianFilter(float curDistance){
-  float sum = 0;
-  float holder = 0;
-  if (numValues < 9) {
+	float holder = 0;
+  if (numValues < 3) {
     recordDistances[numValues] = curDistance;
     numValues++;
+    return curDistance;
   }else {
-    for (int i = 1; i < 9; i++) {
+	  //shifts values up the array
+    for (int i = 1; i < 3; i++) {
       recordDistances[i-1] = recordDistances[i];
     }
 
-    recordDistances[8] = curDistance;
+    recordDistances[2] = curDistance;
   }
   
   //Sorting
+  /*
   for(int x = 0; x < 8; x++) {
    for(int y = 0; y < 8-(x+1); y++) {
      if(recordDistances[y] > recordDistances[y+1]) {
@@ -64,29 +69,32 @@ float IRSensor::movingMedianFilter(float curDistance){
      }
    }
   }
+  */
 
-  return (float)recordDistances[4];
+  bubbleSort();
+
+  return (float)recordDistances[1];
 }
 
-//float IRSensor::movingAverFilter(float curDistance){
-//  float sum = 0;
-//  if (numValues < 10) {
-//    recordDistances[numValues] = curDistance;
-//    numValues++;
-//  }else {
-//    for (int i = 1; i < 10; i++) {
-//      recordDistances[i-1] = recordDistances[i];
-//    }
-//
-//    recordDistances[9] = curDistance;
-//  }
-//
-//  for (int i = 0; i < numValues; i++) {
-//    sum += recordDistances[i];
-//  }
-//
-//  return (float)sum/numValues;
-//}
+float IRSensor::movingAverFilter(float curDistance){
+  float sum = 0;
+  if (numValues < 10) {
+   recordDistances[numValues] = curDistance;
+    numValues++;
+  }else {
+    for (int i = 1; i < 10; i++) {
+      recordDistances[i-1] = recordDistances[i];
+    }
+
+    recordDistances[9] = curDistance;
+  }
+
+  for (int i = 0; i < numValues; i++) {
+    sum += recordDistances[i];
+ }
+
+  return (float)sum/numValues;
+}
 
 void IRSensor::setup(float a1, float a2) {
 
@@ -142,3 +150,34 @@ float IRSensor::getCorrectExp(float val) {
 	return corrParam1_ * pow(val,corrParam2_);
 }
 
+void IRSensor::bubbleSort() {
+  float swap = 0;
+	/*bool swapped = true;
+	int j = 0;
+	int tmp;
+	while (swapped) {
+		swapped = false;
+		j++;
+		for (int i = 0; i < numValues - j; i++) {
+			if (recordDistances[i] > recordDistances[i + 1]) {
+				tmp = recordDistances[i];
+				recordDistances[i] = recordDistances[i + 1];
+				recordDistances[i + 1] = tmp;
+				swapped = true;
+			}
+		}
+	}*/
+
+ for (int i = 0 ; i < numValues ; i++)
+  {
+    for (int j = 0 ; j < numValues - i - 1; j++)
+    {
+      if (recordDistances[j] > recordDistances[j+1]) /* For decreasing order use < */
+      {
+        swap       = recordDistances[j];
+        recordDistances[j]   = recordDistances[j+1];
+        recordDistances[j+1] = swap;
+      }
+    }
+  }
+}

@@ -9,6 +9,8 @@
 #define LIBRARIES_IRSENSOR_IRSENSOR_H_
 #include <Arduino.h>
 #include <LightChrono.h>
+#include "MedianFilter.h"
+
 	typedef enum {
 	  SHARP_DX, //2D120X
 	  SHARP_Ya, //2Y0A21
@@ -36,10 +38,12 @@ private:
 	float getCorrectLinear(float val);
 	float getCorrectExp(float val);
 	float read(SHARP which_one, int which_analog_pin);
-  float movingAverFilter(float curDistance);
-  float movingMedianFilter(float curDistance);
-  int numValues;
-  float recordDistances[10];
+	float movingAverFilter(float curDistance);
+	float movingMedianFilter(float curDistance);
+	void bubbleSort();
+	int numValues;
+	float recordDistances[10];
+	//MedianFilter medianFilter(10,0);
 };
 
 #endif /* LIBRARIES_IRSENSOR_IRSENSOR_H_ */

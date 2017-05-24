@@ -186,10 +186,14 @@ void MobilePlatform::setStepSize(float stepSize) {
 	stepSize_ = stepSize;
 }
 float MobilePlatform::getIRAngle(bool side) {
-	if(side)
-		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 90/M_PI;
+	if (side)
+		//return atan2((IRDistSideFront_-IRDistSideBack_)/10,irDistSide_) * 90/M_PI;
+	//	return atan((IRDistSideFront_ - IRDistSideBack_)/10)
+		//return (atan2((IRDistSideFront_ - IRDistSideBack_), 10) * 180/ M_PI);
+		return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
 	else
 		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) * 90/M_PI;
+	
 }
 
 void MobilePlatform::giveSensorVals(float* IRValues) {
@@ -205,6 +209,7 @@ float MobilePlatform::getIRMidDist(bool side) {
 	else
 		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
+
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {
 	dt1 = 1/Rw_ * (vx + vy - (l2_ + l1_) * omega);//Front left
