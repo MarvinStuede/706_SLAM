@@ -16,7 +16,7 @@ class Mapping {
 public:
   Mapping();
   virtual ~Mapping();
-  float robotPosition((float xPos, float yPos, float radAngle));
+  float robotPosition(float xPos, float yPos, float radAngle);
   float obstaclePosition(float xPos, float yPos, float *IRsensors, float sonar);
   void sendInfo();
 private:

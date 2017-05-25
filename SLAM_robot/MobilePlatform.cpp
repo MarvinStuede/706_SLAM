@@ -8,8 +8,8 @@
 #include "MobilePlatform.h"
 
 MobilePlatform::MobilePlatform():
-pidWallDist_(0.7,0.00001,0),
-pidWallRot_(3,0.000003,0.0001){
+pidWallDist_(0.5,0.0000001,0.01),
+pidWallRot_(0.415,0.000005,0.04){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -275,12 +275,12 @@ void MobilePlatform::setStepSize(float stepSize) {
 }
 float MobilePlatform::getIRAngle(bool side) {
 	if (side)
-		return atan2((IRDistSideFront_-IRDistSideBack_)/10,irDistSide_) * 90/M_PI;
+		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 180/M_PI;
 	//	return atan((IRDistSideFront_ - IRDistSideBack_)/10)
 		//return (atan2((IRDistSideFront_ - IRDistSideBack_), 10) * 180/ M_PI);
 		//return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
 	else
-		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) * 90/M_PI;
+		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) *180/M_PI;
 	
 }
 

@@ -18,7 +18,8 @@ enum statesMain{
 enum statesInit{
 	INIT_SPIN,
 	INIT_APP_WALL_1,
-	INIT_APP_WALL_2
+	INIT_APP_WALL_2,
+	INIT_APP_WALL_3
 }stateInit_ = INIT_SPIN;
 
 MPU mpu;
@@ -161,10 +162,12 @@ if(!robot.isBatteryVoltageTooLow()){
 		break;
 	}
 	}
-//	Serial.print(ctrlVx);
-//	Serial.print(" ");
+	//Serial.print(IRValues[2]);
+	//Serial.print(" ");
+	//Serial.print(IRValues[3]);
+	//Serial.print(" ");
 	Serial.print(robot.getIRAngle(false));
-	Serial.print(" ");
+Serial.print(" ");
 	Serial.println();
 
 //	if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
@@ -172,8 +175,6 @@ if(!robot.isBatteryVoltageTooLow()){
 //		}
 //
 //	ctrlOmega = pidRotary.getControlVar(rotError, dt);
-
-
 
 	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 	robot.move();
@@ -196,10 +197,10 @@ bool turnAngle(float angleGoal, float threshold){
  		return false;
  }
 inline float rad2deg(float radVal){
-	return radVal * 90/M_PI;
+	return radVal * 180/M_PI;
 }
 inline float deg2rad(float degVal){
-	return degVal * M_PI/90;
+	return degVal * M_PI/180;
 }
 
 
