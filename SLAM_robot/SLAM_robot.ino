@@ -67,8 +67,10 @@ void setup()
 
 	IR_front_left.setup(1.4197,-2.8392);
 	IR_front_right.setup(1.1074,-0.4708);
-	IR_side_front.setup(1.4239,-3.4408);
-	IR_side_back.setup(1.5945,-7.1103);
+//	IR_side_front.setup(1.4239,-3.4408);
+//	IR_side_back.setup(1.5945,-7.1103);
+  IR_side_front.setup(1.4239,-3.4408);
+  IR_side_back.setup(1.5945,-9.1103);
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
@@ -121,7 +123,7 @@ if(!robot.isBatteryVoltageTooLow()){
 		}
 		case INIT_APP_WALL_1:{
 			//Approach wall to side
-			if(robot.approachWall(30,1,ctrlVx,ctrlVy,ctrlOmega,true))
+		  if(robot.approachWall(30,1,ctrlVx,ctrlVy,ctrlOmega,true))
 				stateInit_ = INIT_APP_WALL_2;
 			break;
 		}
@@ -164,9 +166,9 @@ if(!robot.isBatteryVoltageTooLow()){
 		break;
 	}
 	}
-	//Serial.print(IRValues[2]);
-	//Serial.print(" ");
-	//Serial.print(IRValues[3]);
+	Serial.print(IRValues[2]);
+	Serial.print(" ");
+	Serial.print(IRValues[3]);
 	//Serial.print(" ");
 //	Serial.print(robot.getIRAngle(true));
 //Serial.print(" ");
