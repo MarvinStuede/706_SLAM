@@ -155,8 +155,8 @@ float IRSensor::readSensor(SHARP which_one, int which_analog_pin) {
 			return 150.1;
 		if (temp_dis >= 0.0 && temp_dis <= 20.0)
 			return 19.9;
-		if (temp_dis > 90.0)
-			return 90.1;
+		if (temp_dis > 120.0)
+			return 120.1;
 		return temp_dis;
 		break;
 	}

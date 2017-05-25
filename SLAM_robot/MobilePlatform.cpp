@@ -10,8 +10,8 @@
 MobilePlatform::MobilePlatform():
 //pidWallDist_(0.5,0.0000001,0.01),
 //pidWallRot_(0.415,0.000005,0.04){
-	pidWallDist_(0.8,0.0000,0),
-	pidWallRot_(1.5,0.0000001,0){
+pidWallDist_(1.5,0.0000,0),
+pidWallRot_(1.8,0.0000004,0){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -27,52 +27,52 @@ MobilePlatform::~MobilePlatform() {
 }
 
 void MobilePlatform::moveForward() {
-	  motorFrontLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackRight_.writeMicroseconds(1500 - speed_);
-	  motorFrontRight_.writeMicroseconds(1500 - speed_);
+	motorFrontLeft_.writeMicroseconds(1500 + speed_);
+	motorBackLeft_.writeMicroseconds(1500 + speed_);
+	motorBackRight_.writeMicroseconds(1500 - speed_);
+	motorFrontRight_.writeMicroseconds(1500 - speed_);
 }
 
 void MobilePlatform::moveLeft() {
-	  motorFrontLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackRight_.writeMicroseconds(1500 + speed_);
-	  motorFrontRight_.writeMicroseconds(1500 - speed_);
+	motorFrontLeft_.writeMicroseconds(1500 - speed_);
+	motorBackLeft_.writeMicroseconds(1500 + speed_);
+	motorBackRight_.writeMicroseconds(1500 + speed_);
+	motorFrontRight_.writeMicroseconds(1500 - speed_);
 }
 
 void MobilePlatform::moveBackward() {
-	  motorFrontLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackRight_.writeMicroseconds(1500 + speed_);
-	  motorFrontRight_.writeMicroseconds(1500 + speed_);
+	motorFrontLeft_.writeMicroseconds(1500 - speed_);
+	motorBackLeft_.writeMicroseconds(1500 - speed_);
+	motorBackRight_.writeMicroseconds(1500 + speed_);
+	motorFrontRight_.writeMicroseconds(1500 + speed_);
 }
 
 void MobilePlatform::moveRight() {
-	  motorFrontLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackRight_.writeMicroseconds(1500 - speed_);
-	  motorFrontRight_.writeMicroseconds(1500 + speed_);
+	motorFrontLeft_.writeMicroseconds(1500 + speed_);
+	motorBackLeft_.writeMicroseconds(1500 - speed_);
+	motorBackRight_.writeMicroseconds(1500 - speed_);
+	motorFrontRight_.writeMicroseconds(1500 + speed_);
 }
 
 void MobilePlatform::move() {
-	  motorFrontLeft_.writeMicroseconds(1500 + speedFrontLeft_);
-	  motorBackLeft_.writeMicroseconds(1500 + speedBackLeft_);
-	  motorBackRight_.writeMicroseconds(1500 - speedBackRight_);
-	  motorFrontRight_.writeMicroseconds(1500 - speedFrontRight_);
+	motorFrontLeft_.writeMicroseconds(1500 + speedFrontLeft_);
+	motorBackLeft_.writeMicroseconds(1500 + speedBackLeft_);
+	motorBackRight_.writeMicroseconds(1500 - speedBackRight_);
+	motorFrontRight_.writeMicroseconds(1500 - speedFrontRight_);
 }
 
 void MobilePlatform::turnLeft() {
-	  motorFrontLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackLeft_.writeMicroseconds(1500 - speed_);
-	  motorBackRight_.writeMicroseconds(1500 - speed_);
-	  motorFrontRight_.writeMicroseconds(1500 - speed_);
+	motorFrontLeft_.writeMicroseconds(1500 - speed_);
+	motorBackLeft_.writeMicroseconds(1500 - speed_);
+	motorBackRight_.writeMicroseconds(1500 - speed_);
+	motorFrontRight_.writeMicroseconds(1500 - speed_);
 }
 
 void MobilePlatform::turnRight() {
-	  motorFrontLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackLeft_.writeMicroseconds(1500 + speed_);
-	  motorBackRight_.writeMicroseconds(1500 + speed_);
-	  motorFrontRight_.writeMicroseconds(1500 + speed_);
+	motorFrontLeft_.writeMicroseconds(1500 + speed_);
+	motorBackLeft_.writeMicroseconds(1500 + speed_);
+	motorBackRight_.writeMicroseconds(1500 + speed_);
+	motorFrontRight_.writeMicroseconds(1500 + speed_);
 }
 
 void MobilePlatform::enableMotors() {
@@ -95,10 +95,10 @@ void MobilePlatform::disableMotors() {
 }
 
 void MobilePlatform::stop() {
-	  motorFrontLeft_.writeMicroseconds(1500);
-	  motorBackLeft_.writeMicroseconds(1500);
-	  motorBackRight_.writeMicroseconds(1500);
-	  motorFrontRight_.writeMicroseconds(1500);
+	motorFrontLeft_.writeMicroseconds(1500);
+	motorBackLeft_.writeMicroseconds(1500);
+	motorBackRight_.writeMicroseconds(1500);
+	motorFrontRight_.writeMicroseconds(1500);
 }
 
 void MobilePlatform::setSpeed(float vx, float vy, float omega) {
@@ -121,55 +121,49 @@ void MobilePlatform::setup() {
 
 bool MobilePlatform::isBatteryVoltageTooLow() {
 
-	  if (chronoBattery_.elapsed() > 500) { //500ms timed if statement to check lipo and output speed settings
-	    int Lipo_level_cal;
-	    //the voltage of a LiPo cell depends on its chemistry and varies from about 2.7-3.1 V (discharged) = 620(3.1V Min)
-	    //to about 4.20-4.25 V (fully charged) = 820(4.1V Max)
-	    Lipo_level_cal = (analogRead(A0) - 620);
-	    Lipo_level_cal = Lipo_level_cal * 100;
-	    Lipo_level_cal = Lipo_level_cal / 200;
-	    chronoBattery_.restart();
-	    if (Lipo_level_cal < 0) return false;
-	  }
-	  return false;
+	if (chronoBattery_.elapsed() > 500) { //500ms timed if statement to check lipo and output speed settings
+		int Lipo_level_cal;
+		//the voltage of a LiPo cell depends on its chemistry and varies from about 2.7-3.1 V (discharged) = 620(3.1V Min)
+		//to about 4.20-4.25 V (fully charged) = 820(4.1V Max)
+		Lipo_level_cal = (analogRead(A0) - 620);
+		Lipo_level_cal = Lipo_level_cal * 100;
+		Lipo_level_cal = Lipo_level_cal / 200;
+		chronoBattery_.restart();
+		if (Lipo_level_cal < 0) return false;
+	}
+	return false;
 }
 
-bool MobilePlatform::approachWall(float distance, float threshold, float& vx, float& vy, float& omega,
+bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 		bool toSide) {
-	float error_dist = 0;
-	float error_rot = 0;
+	//Functions uses Controller to keep distance to wall
+
 	if(toSide){
-		error_dist = distance - getIRMidDist(true);
-		error_rot = getIRAngle(true);
-		vy = pidWallDist_.getControlVar(error_dist,stepSize_);
-		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
-		Serial.print(getIRMidDist(true));
-		Serial.print(" ");
-
-		if (fabs(error_dist) < threshold){
-
-			return true;
-		}
-		else{
-
-			return false;
-		}
+		vy =  pidWallDist_.getControlVar(distance,getIRMidDist(true),stepSize_);
 	}
 	else{
+		vx = - pidWallDist_.getControlVar(distance,getIRMidDist(false),stepSize_);
+	}
+	if (pidWallDist_.isSettled(0.5)){
+		pidWallDist_.reset();
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
-	error_dist = getIRMidDist(false) - distance;
-	error_rot = getIRAngle(false);
-	vx = pidWallDist_.getControlVar(error_dist,stepSize_);
-	omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+bool MobilePlatform::keepWallAngle(float angle, float& omega, bool toSide) {
+	//Function uses controller to keep angle to wall
 
-	if (fabs(error_dist) < threshold){
-
+	omega = -pidWallRot_.getControlVar(angle,getIRAngle(toSide),stepSize_,5);
+	if (pidWallRot_.isSettled(0.3)){
+		pidWallRot_.reset();
 		return true;
 	}
 	else{
 
 		return false;
-	}
 	}
 }
 
@@ -270,7 +264,7 @@ bool MobilePlatform::objectAvoidance(float thresholdFront, float thresholdSide, 
 		break;
 	}
 
-	
+
 	return true; //obstacle avoidance is needed
 }
 
@@ -280,12 +274,9 @@ void MobilePlatform::setStepSize(float stepSize) {
 float MobilePlatform::getIRAngle(bool side) {
 	if (side)
 		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 180/M_PI;
-	//	return atan((IRDistSideFront_ - IRDistSideBack_)/10)
-		//return (atan2((IRDistSideFront_ - IRDistSideBack_), 10) * 180/ M_PI);
-		//return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
 	else
 		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) *180/M_PI;
-	
+
 }
 
 void MobilePlatform::giveSensorVals(float* IRValues, float usDistance) {
@@ -302,6 +293,8 @@ float MobilePlatform::getIRMidDist(bool side) {
 	else
 		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
+
+
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {

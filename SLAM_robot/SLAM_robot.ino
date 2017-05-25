@@ -9,19 +9,6 @@
 #include "LightChrono.h"
 #include "Util.h"
 
-enum statesMain{
-	STATE_INIT,
-	STATE_TURN90,
-	STATE_WAIT
-}stateMain_ = STATE_INIT;
-
-enum statesInit{
-	INIT_SPIN,
-	INIT_APP_WALL_1,
-	INIT_APP_WALL_2,
-	INIT_APP_WALL_3
-}stateInit_ = INIT_SPIN;
-
 MPU mpu;
 UltraSonicSensor ultrasonic;
 IRSensor IR_front_left(SHARP_DX,A1);
@@ -30,7 +17,7 @@ IRSensor IR_side_front(SHARP_YA,A3);
 IRSensor IR_side_back(SHARP_YA,A4);
 MobilePlatform robot;
 LightChrono chrono_;
-PIDController pidRotary(0.6,0.0001,0);
+PIDController pidRotary(0.4,0.0000005,0.01);
 PIDController pidSide(0.3, 0.0001, 0.001);
 
 Kalman kalmanZ;
@@ -40,10 +27,6 @@ float gyr[3];
 double dt = 0;
 float stepSize = 10;
 
-//float FL[9];
-//float FR[9];
-//float SF[9];
-//float SB[9];
 float angle = 0;
 float kalAngle = 0;
 double startTime = 0;
@@ -56,7 +39,15 @@ float usDistance;
 float ctrlVx = 0;
 float ctrlVy = 0;
 float ctrlOmega = 0;
+float wallSpeed = 5.5;
 double count = 0;
+unsigned int wallDistIndex = 0;
+unsigned int distances = 4;
+unsigned int turnCnt = 0;
+float wallDistances[4] = {10,25,40,55};
+statesInit stateInit_ = INIT_SPIN;
+statesMain stateMain_ = STATE_INIT;
+statesMain oldState_ = NONE;
 
 
 void setup()
@@ -75,135 +66,172 @@ void setup()
 	chrono_.start();
 }
 
-
-void loop()
-{
-if(!robot.isBatteryVoltageTooLow()){
-	mpu.readRegisters(); //DO NOT DELETE
-	dt = ((double)micros())/1000000 - prevTime;
-	prevTime = ((double)micros())/1000000;
-
-	//Read sensors
-	mpu.getGyro(gyr);
-	angle += gyr[2] * dt;
-	rotError = angleDes - angle;
-
-	IRValues[0]= IR_front_left.getValue(LINEAR);
-	IRValues[1] = IR_front_right.getValue(LINEAR);
-	IRValues[2]= IR_side_front.getValue(LINEAR);
-	IRValues[3] = IR_side_back.getValue(LINEAR);
-	usDistance = ultrasonic.getDistance();
-	robot.giveSensorVals(IRValues,usDistance);
-	robot.setStepSize(dt);
-
-		//if (fabs(distWall - robot.getIRMidDist(true)) < 2) {
-		//	ctrlOmega = pidRotary.getControlVar(rotError, dt);
-		//	ctrlVy = 0;
-		//	ctrlVx = 3;
-		/*}
-		else {
-			ctrlOmega = 0;
-			ctrlVy = pidSide.getControlVar(distWall - robot.getIRMidDist(true), dt);
-			ctrlVx = 3;
-		}*/
-
-	switch(stateMain_){
-	case STATE_INIT:{
-		switch(stateInit_){
-		case INIT_SPIN:{
-			ctrlOmega = 20;
-			//Spin until wall to left found
-			if(fabs(robot.getIRAngle(true)) < 5 && robot.getIRMidDist(true) < 80){
-				stateInit_ = INIT_APP_WALL_1;
-				ctrlOmega = -30;
-			}
-			break;
-		}
-		case INIT_APP_WALL_1:{
-			//Approach wall to side
-			if(robot.approachWall(30,1,ctrlVx,ctrlVy,ctrlOmega,true))
-				stateInit_ = INIT_APP_WALL_2;
-			break;
-		}
-		case INIT_APP_WALL_2:{
-				//Keep distance to wall and drive forwards
-				robot.approachWall(30,2,ctrlVx,ctrlVy,ctrlOmega,true);
-				ctrlVx = 2.5;
-
-				if(usDistance <= 5){
-					ctrlVx = 0;
-					ctrlVy = 0;
-					ctrlOmega = 0;
-					angle=0;
-					stateMain_ = STATE_TURN90;
-				}
-			break;
-		}
-		}
-
-		break;
-	}
-	case STATE_TURN90:{
-
-		rotError = angleDes - angle;
-		ctrlOmega = pidRotary.getControlVar(rotError,dt);
-		if(fabs(rotError) < 5){
-			stateMain_ = STATE_WAIT;
-			ctrlOmega = 0;
-			ctrlVx = 0;
-			ctrlVy = 0;
-			angleDes += 90;
-			chrono_.restart();
-		}
-		break;
-	}
-	case STATE_WAIT:{
-		ctrlVx = 0;
-		ctrlVy = 0;
+bool turnAngle(float angleGoal){
+	ctrlOmega = pidRotary.getControlVar(angleGoal,angle,dt);
+	if(pidRotary.isSettled(0.3)){
+		pidRotary.reset();
 		ctrlOmega = 0;
-		break;
+		return true;
 	}
-	}
-	//Serial.print(IRValues[2]);
-	//Serial.print(" ");
-	//Serial.print(IRValues[3]);
-	//Serial.print(" ");
-//	Serial.print(robot.getIRAngle(true));
-//Serial.print(" ");
-	Serial.println();
-
-//	if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
-//			Serial1.println("object detected");
-//		}
-//
-//	ctrlOmega = pidRotary.getControlVar(rotError, dt);
-
-	robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
-	robot.move();
-
-
-	//delay(10);
-
+	else
+		return false;
 }
-else
-	Serial.println("VOLTAGE TOO LOW");
-}
-bool turnAngle(float angleGoal, float threshold){
- 	float e = angleGoal - angle;
- 	ctrlOmega = pidRotary.getControlVar(e,dt);
- 	if(fabs(e) < threshold){
- 		ctrlOmega = 0;
- 		return true;
- 	}
- 	else
- 		return false;
- }
 inline float rad2deg(float radVal){
 	return radVal * 180/M_PI;
 }
 inline float deg2rad(float degVal){
 	return degVal * M_PI/180;
 }
+void toState(statesMain state){
+	oldState_ = stateMain_;
+	stateMain_ = state;
+}
+
+void loop()
+{
+	if(!robot.isBatteryVoltageTooLow()){
+		mpu.readRegisters(); //DO NOT DELETE
+		dt = ((double)micros())/1000000 - prevTime;
+		prevTime = ((double)micros())/1000000;
+
+		//Read sensors
+		mpu.getGyro(gyr);
+		angle += gyr[2] * dt;
+		rotError = angleDes - angle;
+
+		IRValues[0]= IR_front_left.getValue(LINEAR);
+		IRValues[1] = IR_front_right.getValue(LINEAR);
+		IRValues[2]= IR_side_front.getValue(LINEAR);
+		IRValues[3] = IR_side_back.getValue(LINEAR);
+		usDistance = ultrasonic.getDistance();
+		robot.giveSensorVals(IRValues,usDistance);
+		robot.setStepSize(dt);
+
+		switch(stateMain_){
+		//INIT State: Referencing (drive to corner)
+		case STATE_INIT:{
+			switch(stateInit_){
+			case INIT_SPIN:{
+				ctrlOmega = 20;
+				//Spin until wall to left found
+				//Angle must be below the value and distance below max sensor values
+				if(fabs(robot.getIRAngle(true)) < 5 && robot.getIRMidDist(true) < 110){
+					stateInit_ = INIT_APP_WALL_1;
+					ctrlOmega = 0;
+				}
+				break;
+			}
+			case INIT_APP_WALL_1:{
+				//Approach wall to side
+				if(robot.keepWallDist(wallDistances[0] + 20,ctrlVx,ctrlVy,true)){
+					stateInit_ = INIT_APP_WALL_2;
+					ctrlVy = 0;
+
+				}
+
+				break;
+			}
+			case INIT_APP_WALL_2:{
+				//Align at wall
+				if(robot.keepWallAngle(0,ctrlOmega,true))
+					stateInit_ = INIT_APP_WALL_3;
+				break;
+			}
+			case INIT_APP_WALL_3:{
+				//Keep distance to wall and drive forwards
+				robot.keepWallDist(wallDistances[0] + 20,ctrlVx,ctrlVy,true);
+				robot.keepWallAngle(0,ctrlOmega,true);
+				ctrlVx = wallSpeed;
+
+				if(usDistance <= 10){
+					ctrlVx = 0;
+					ctrlVy = 0;
+					ctrlOmega = 0;
+					angleDes = -80;
+					angle = 0;
+					stateInit_ = INIT_APP_WALL_4;
+				}
+				break;
+			}
+			case INIT_APP_WALL_4:{
+				//Turn so that robot faces away from wall
+				if(turnAngle(angleDes)){
+					toState(STATE_DRIVE_WALL);
+					ctrlOmega = 0;
+					ctrlVx = 0;
+					ctrlVy = 0;
+				}
+				break;
+			}
+			}
+
+			break;
+		}
+		//State: Drive along wall, keep distance and angle to wall
+		case STATE_DRIVE_WALL:{
+
+			robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
+			robot.keepWallAngle(0,ctrlOmega,true);
+			//Speed along wall
+			ctrlVx = wallSpeed;
+			//Counter to check whether distance to wall must be increased
+			//Stop if US sensor has defined distance to wall
+			if(turnCnt == 4 && wallDistIndex + 1 <= distances -1){
+				if	(usDistance <= wallDistances[wallDistIndex + 1]){
+					turnCnt = 0;
+					wallDistIndex++;
+					ctrlVx = 0;
+					ctrlVy = 0;
+					ctrlOmega = 0;
+					angleDes = -90;
+					toState(STATE_TURN);
+				}
+			}
+			else if(usDistance <= wallDistances[wallDistIndex]){
+				ctrlVx = 0;
+				ctrlVy = 0;
+				ctrlOmega = 0;
+				angleDes = -90;
+				toState(STATE_TURN);
+			}
+			break;
+		}
+		//State: Turn for pre-defined angle
+		case STATE_TURN:{
+			if(oldState_ != stateMain_){
+				oldState_ = stateMain_;
+				angle = 0;
+			}
+
+			if(turnAngle(angleDes)){
+				toState(STATE_DRIVE_WALL);
+				turnCnt++;
+
+				ctrlOmega = 0;
+				ctrlVx = 0;
+				ctrlVy = 0;
+			}
+			break;
+		}
+		case STATE_WAIT:{
+			ctrlVx = 0;
+			ctrlVy = 0;
+			ctrlOmega = 0;
+			break;
+		}
+		}
+		//			Serial.print(robot.getIRMidDist(true));
+		//		Serial.print(" ");
+		Serial.println();
+		robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
+		robot.move();
+		//delay(10);
+
+	}
+	else
+		Serial.println("VOLTAGE TOO LOW");
+}
+
 
 
 

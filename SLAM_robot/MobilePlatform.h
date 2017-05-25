@@ -31,7 +31,8 @@ public:
 	void setSpeed(float vx, float vy, float omega);
 	void setSpeed(float speed);
 	bool isBatteryVoltageTooLow();
-	bool approachWall(float distance, float threshold, float& vx, float& vy, float& omega, bool toSide = false);
+	bool keepWallDist(float distance, float& vx, float& vy, bool toSide = false);
+	bool keepWallAngle(float angle,float& omega, bool toSide = false);
 	void setStepSize(float stepSize);
 	float getIRAngle(bool side);
 	float getIRMidDist(bool side);
@@ -43,7 +44,7 @@ private:
 	static const byte pinRightFront_ = 49;
 	static constexpr float l1_ = 0.0863;
 	static constexpr float l2_ = 0.0763;
-	static constexpr float irDistSide_ = 0.15;
+	static constexpr float irDistSide_ = 0.145;
 	static constexpr float Rw_ = 0.0275;
 	float IRDistFrontLeft_ = 0;
 	float IRDistFrontRight_ = 0;
@@ -63,8 +64,8 @@ private:
 	float speedBackLeft_;
 	float speedBackRight_;
 	float stepSize_;
-	float vMax_ = 3;
-	float omegaMax_ = 30;
+	float vMax_ = 5;
+	float omegaMax_ = 40;
 	inline void limit (float& val,float max)
 	{val = val > max ? max:((val<-max) ? -max:val);};
 
