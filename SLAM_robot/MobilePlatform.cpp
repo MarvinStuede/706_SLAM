@@ -8,8 +8,10 @@
 #include "MobilePlatform.h"
 
 MobilePlatform::MobilePlatform():
-pidWallDist_(0.5,0.0000001,0.01),
-pidWallRot_(0.415,0.000005,0.04){
+//pidWallDist_(0.5,0.0000001,0.01),
+//pidWallRot_(0.415,0.000005,0.04){
+	pidWallDist_(0.25,0.00005,0),
+	pidWallRot_(2.5,0,0){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;

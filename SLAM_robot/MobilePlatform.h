@@ -63,8 +63,8 @@ private:
 	float speedBackLeft_;
 	float speedBackRight_;
 	float stepSize_;
-	float vMax_ = 3;
-	float omegaMax_ = 20;
+	float vMax_ = 100;
+	float omegaMax_ = 100;
 	inline void limit (float& val,float max)
 	{val = val > max ? max:((val<-max) ? -max:val);};
 
