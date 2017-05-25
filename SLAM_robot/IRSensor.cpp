@@ -42,20 +42,41 @@ float IRSensor::getValue(corrType type) {
 }
 
 float IRSensor::movingMedianFilter(float curDistance){
-	float holder = 0;
-  if (numValues < 3) {
+	float smallest;
+	int smallestIndex;
+	float arraySort[10];
+
+  if (numValues < 10) {
     recordDistances[numValues] = curDistance;
     numValues++;
     return curDistance;
   }else {
 	  //shifts values up the array
-    for (int i = 1; i < 3; i++) {
-      recordDistances[i-1] = recordDistances[i];
+    for (int i = 1; i < 10; i++) {
+		recordDistances[i - 1] = recordDistances[i];
+		arraySort[i - 1] = recordDistances[i - 1];
     }
 
-    recordDistances[2] = curDistance;
+    recordDistances[9] = curDistance;
+	arraySort[9] = curDistance;
   }
   
+
+  for (int i = 0; i < 5; i++) {
+	  smallest = arraySort[i];
+	  smallestIndex = i;
+	  for (int j = i+1; j < 10; j++) {
+		  if (arraySort[j] < smallest) {
+			  smallest = arraySort[j];
+			  smallestIndex = j;
+		  }
+	  }
+
+	  if ((smallestIndex != i)&&(i != 4)) {
+		  arraySort[smallestIndex] = arraySort[i];
+		  arraySort[i] = smallest;
+	  }
+  }
   //Sorting
   /*
   for(int x = 0; x < 8; x++) {
@@ -69,9 +90,9 @@ float IRSensor::movingMedianFilter(float curDistance){
   }
   */
 
-  bubbleSort();
+  //bubbleSort();
 
-  return (float)recordDistances[1];
+  return smallest;
 }
 
 float IRSensor::movingAverFilter(float curDistance){
