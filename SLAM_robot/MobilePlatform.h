@@ -43,7 +43,7 @@ private:
 	static const byte pinRightFront_ = 49;
 	static constexpr float l1_ = 0.0863;
 	static constexpr float l2_ = 0.0763;
-	static constexpr float irDistSide_ = 0.1;
+	static constexpr float irDistSide_ = 0.15;
 	static constexpr float Rw_ = 0.0275;
 	float IRDistFrontLeft_ = 0;
 	float IRDistFrontRight_ = 0;
@@ -63,6 +63,10 @@ private:
 	float speedBackLeft_;
 	float speedBackRight_;
 	float stepSize_;
+	float vMax_ = 3;
+	float omegaMax_ = 20;
+	inline void limit (float& val,float max)
+	{val = val > max ? max:((val<-max) ? -max:val);};
 
 	int avoidanceState; //Records the state of the object avoidance function;
 

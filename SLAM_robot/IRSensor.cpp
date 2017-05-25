@@ -26,7 +26,7 @@ float IRSensor::getValue(corrType type) {
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
 	//readVal = movingMedianFilter(read(type_, pin_));
-	readVal = movingAverFilter(read(type_, pin_));
+	readVal = movingAverFilter(readSensor(type_, pin_));
 	//readVal = read(type_,pin_);
 	oldDist_ = getCorrectLinear(readVal);
 		if(type == LINEAR){
@@ -101,7 +101,7 @@ void IRSensor::setup(float a1, float a2) {
 	corrParam2_ = a2;
 }
 
-float IRSensor::read(SHARP which_one, int which_analog_pin) {
+float IRSensor::readSensor(SHARP which_one, int which_analog_pin) {
 	float temp_dis;
 	switch (which_one) {
 	case SHARP_DX:

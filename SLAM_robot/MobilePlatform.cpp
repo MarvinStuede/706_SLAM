@@ -9,7 +9,7 @@
 
 MobilePlatform::MobilePlatform():
 pidWallDist_(0.7,0.00001,0),
-pidWallRot_(2,0.00001,0){
+pidWallRot_(3,0.000003,0.0001){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -86,7 +86,7 @@ void MobilePlatform::disableMotors() {
 	motorBackRight_.detach();  // detach the servo on pin right_rear to the servo object
 	motorFrontRight_.detach();  // detach the servo on pin right_front to the servo object
 
-	pinMode(pinLeftFront_, INPUT);
+	pinMode(pinLeftFront_,INPUT);
 	pinMode(pinLeftBack_, INPUT);
 	pinMode(pinRightBack_, INPUT);
 	pinMode(pinRightFront_, INPUT);
@@ -100,6 +100,11 @@ void MobilePlatform::stop() {
 }
 
 void MobilePlatform::setSpeed(float vx, float vy, float omega) {
+
+	limit(vx,vMax_);
+	limit(vy,vMax_);
+	limit(omega,omegaMax_);
+
 	inverseKinematics(speedFrontLeft_,speedFrontRight_,speedBackLeft_,speedBackRight_,vx,vy,omega);
 
 }
@@ -133,9 +138,7 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	float error_rot = 0;
 	if(toSide){
 		error_dist = getIRMidDist(true) - distance;
-		error_rot = getIRAngle(true) * 90/M_PI;
-		Serial.print(error_rot);
-		Serial.print(" ");
+		error_rot = getIRAngle(true);
 
 		if (fabs(error_dist) < threshold){
 			pidWallDist_.reset();
@@ -151,7 +154,7 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	else{
 
 	error_dist = getIRMidDist(false) - distance;
-	error_rot = getIRAngle(false) * 90/M_PI;
+	error_rot = getIRAngle(false);
 
 	if (fabs(error_dist) < threshold){
 		pidWallDist_.reset();
@@ -272,10 +275,10 @@ void MobilePlatform::setStepSize(float stepSize) {
 }
 float MobilePlatform::getIRAngle(bool side) {
 	if (side)
-		//return atan2((IRDistSideFront_-IRDistSideBack_)/10,irDistSide_) * 90/M_PI;
+		return atan2((IRDistSideFront_-IRDistSideBack_)/10,irDistSide_) * 90/M_PI;
 	//	return atan((IRDistSideFront_ - IRDistSideBack_)/10)
 		//return (atan2((IRDistSideFront_ - IRDistSideBack_), 10) * 180/ M_PI);
-		return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
+		//return asin((IRDistSideFront_ - IRDistSideBack_) / 10) * 90 / M_PI;
 	else
 		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) * 90/M_PI;
 	

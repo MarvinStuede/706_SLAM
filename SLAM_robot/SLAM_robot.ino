@@ -92,13 +92,13 @@ if(!robot.isBatteryVoltageTooLow()){
 	IRValues[2]= IR_side_front.getValue(LINEAR);
 	IRValues[3] = IR_side_back.getValue(LINEAR);
 	usDistance = ultrasonic.getDistance();
-	robot.giveSensorVals(IRValues);
+	robot.giveSensorVals(IRValues,usDistance);
 	robot.setStepSize(dt);
 
 		//if (fabs(distWall - robot.getIRMidDist(true)) < 2) {
-			ctrlOmega = pidRotary.getControlVar(rotError, dt);
-			ctrlVy = 0;
-			ctrlVx = 3;
+		//	ctrlOmega = pidRotary.getControlVar(rotError, dt);
+		//	ctrlVy = 0;
+		//	ctrlVx = 3;
 		/*}
 		else {
 			ctrlOmega = 0;
@@ -112,7 +112,7 @@ if(!robot.isBatteryVoltageTooLow()){
 		case INIT_SPIN:{
 			ctrlOmega = 20;
 			//Spin until wall to left found
-			if(fabs(rad2deg(robot.getIRAngle(true))) < 5 && robot.getIRMidDist(true) < 50){
+			if(fabs(robot.getIRAngle(false)) < 5 && robot.getIRMidDist(false) < 50){
 				stateInit_ = INIT_APP_WALL_1;
 				ctrlOmega = 0;
 			}
@@ -120,20 +120,20 @@ if(!robot.isBatteryVoltageTooLow()){
 		}
 		case INIT_APP_WALL_1:{
 			//Approach wall to side
-			if(robot.approachWall(25,0.5,ctrlVx,ctrlVy,ctrlOmega,true))
+			if(robot.approachWall(25,2,ctrlVx,ctrlVy,ctrlOmega,false))
 				stateInit_ = INIT_APP_WALL_2;
 			break;
 		}
 		case INIT_APP_WALL_2:{
 				//Keep distance to wall and drive forwards
-				robot.approachWall(15,0.5,ctrlVx,ctrlVy,ctrlOmega,true);
-				ctrlVx = 2.5;
-				if(ultrasonic.getDistance() <= 15){
-					ctrlVx = 0;
-					ctrlVy = 0;
-					ctrlOmega = 0;
-					stateMain_ = STATE_WAIT;
-				}
+				robot.approachWall(25,2,ctrlVx,ctrlVy,ctrlOmega,false);
+				//ctrlVx = 2.5;
+//				if(ultrasonic.getDistance() <= 15){
+//					ctrlVx = 0;
+//					ctrlVy = 0;
+//					ctrlOmega = 0;
+//					stateMain_ = STATE_WAIT;
+//				}
 			break;
 		}
 		}
@@ -163,15 +163,15 @@ if(!robot.isBatteryVoltageTooLow()){
 	}
 //	Serial.print(ctrlVx);
 //	Serial.print(" ");
-	Serial.print(rad2deg(robot.getIRAngle(true)));
+	Serial.print(robot.getIRAngle(false));
 	Serial.print(" ");
 	Serial.println();
 
-if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
-			Serial1.println("object detected");
-		}
-
-	ctrlOmega = pidRotary.getControlVar(rotError, dt);
+//	if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
+//			Serial1.println("object detected");
+//		}
+//
+//	ctrlOmega = pidRotary.getControlVar(rotError, dt);
 
 
 
@@ -179,7 +179,7 @@ if (robot.objectAvoidance(15,30, ctrlVx, ctrlVy, ctrlOmega)) {
 	robot.move();
 
 
-	delay(10);
+	//delay(10);
 
 }
 else

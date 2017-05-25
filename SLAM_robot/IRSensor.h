@@ -37,7 +37,7 @@ private:
 	float corrParam2_;
 	float getCorrectLinear(float val);
 	float getCorrectExp(float val);
-	float read(SHARP which_one, int which_analog_pin);
+	float readSensor(SHARP which_one, int which_analog_pin);
 	float movingAverFilter(float curDistance);
 	float movingMedianFilter(float curDistance);
 	void bubbleSort();
