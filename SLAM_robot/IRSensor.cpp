@@ -25,9 +25,9 @@ float IRSensor::getValue(corrType type) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-	readVal = movingMedianFilter(readSensor(type_, pin_));
+	//readVal = movingMedianFilter(readSensor(type_, pin_));
 	//readVal = movingAverFilter(readSensor(type_, pin_));
-	//readVal = read(type_,pin_);
+	readVal = readSensor(type_,pin_);
 	oldDist_ = getCorrectLinear(readVal);
 		if(type == LINEAR){
 			oldDist_ = getCorrectLinear(readVal);
@@ -44,28 +44,29 @@ float IRSensor::getValue(corrType type) {
 float IRSensor::movingMedianFilter(float curDistance){
 	float smallest;
 	int smallestIndex;
-	float arraySort[10];
+	int length = 4;
+	float arraySort[length];
 
-  if (numValues < 10) {
+  if (numValues < length) {
     recordDistances[numValues] = curDistance;
     numValues++;
     return curDistance;
   }else {
 	  //shifts values up the array
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < length; i++) {
 		recordDistances[i - 1] = recordDistances[i];
 		arraySort[i - 1] = recordDistances[i - 1];
     }
 
-    recordDistances[9] = curDistance;
-	arraySort[9] = curDistance;
+    recordDistances[length-1] = curDistance;
+	arraySort[length-1] = curDistance;
   }
   
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < length/2; i++) {
 	  smallest = arraySort[i];
 	  smallestIndex = i;
-	  for (int j = i+1; j < 10; j++) {
+	  for (int j = i+1; j < length; j++) {
 		  if (arraySort[j] < smallest) {
 			  smallest = arraySort[j];
 			  smallestIndex = j;

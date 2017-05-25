@@ -10,8 +10,8 @@
 MobilePlatform::MobilePlatform():
 //pidWallDist_(0.5,0.0000001,0.01),
 //pidWallRot_(0.415,0.000005,0.04){
-	pidWallDist_(0.25,0.00005,0),
-	pidWallRot_(2.5,0,0){
+	pidWallDist_(0.8,0.0000,0),
+	pidWallRot_(1.5,0.0000001,0){
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -139,17 +139,19 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 	float error_dist = 0;
 	float error_rot = 0;
 	if(toSide){
-		error_dist = getIRMidDist(true) - distance;
+		error_dist = distance - getIRMidDist(true);
 		error_rot = getIRAngle(true);
+		vy = pidWallDist_.getControlVar(error_dist,stepSize_);
+		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+		Serial.print(getIRMidDist(true));
+		Serial.print(" ");
 
 		if (fabs(error_dist) < threshold){
-			pidWallDist_.reset();
-			pidWallRot_.reset();
+
 			return true;
 		}
 		else{
-			vy = - pidWallDist_.getControlVar(error_dist,stepSize_);
-			omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+
 			return false;
 		}
 	}
@@ -157,15 +159,15 @@ bool MobilePlatform::approachWall(float distance, float threshold, float& vx, fl
 
 	error_dist = getIRMidDist(false) - distance;
 	error_rot = getIRAngle(false);
+	vx = pidWallDist_.getControlVar(error_dist,stepSize_);
+	omega = pidWallRot_.getControlVar(error_rot,stepSize_);
 
 	if (fabs(error_dist) < threshold){
-		pidWallDist_.reset();
-		pidWallRot_.reset();
+
 		return true;
 	}
 	else{
-		vx = pidWallDist_.getControlVar(error_dist,stepSize_);
-		omega = pidWallRot_.getControlVar(error_rot,stepSize_);
+
 		return false;
 	}
 	}
