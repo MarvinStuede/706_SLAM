@@ -42,8 +42,9 @@ float ctrlOmega = 0;
 float wallSpeed = 5.5;
 double count = 0;
 unsigned int wallDistIndex = 0;
-unsigned int distances = 4;
 unsigned int turnCnt = 0;
+unsigned int distances = 4;
+float stepThreshold = 8.0;
 float wallDistances[4] = {10,25,40,55};
 statesInit stateInit_ = INIT_SPIN;
 statesMain stateMain_ = STATE_INIT;
@@ -176,17 +177,26 @@ void loop()
 			ctrlVx = wallSpeed;
 			//Counter to check whether distance to wall must be increased
 			//Stop if US sensor has defined distance to wall
-			if(turnCnt == 4 && wallDistIndex + 1 <= distances -1){
-				if	(usDistance <= wallDistances[wallDistIndex + 1]){
-					turnCnt = 0;
-					wallDistIndex++;
-					ctrlVx = 0;
-					ctrlVy = 0;
-					ctrlOmega = 0;
-					angleDes = -90;
-					toState(STATE_TURN);
+			if(turnCnt == 3){
+				//Still larger distances in array
+				if(wallDistIndex + 1 <= distances -1){
+					if	(usDistance <= wallDistances[wallDistIndex + 1]){
+						turnCnt = 0;
+						wallDistIndex++;
+						ctrlVx = 0;
+						ctrlVy = 0;
+						ctrlOmega = 0;
+						angleDes = -90;
+						toState(STATE_TURN);
+					}
+				}
+				//Reached center of field
+				else if(wallDistIndex == distances -1){
+
+					toState(STATE_WAIT);
 				}
 			}
+			//Normal case, just turn
 			else if(usDistance <= wallDistances[wallDistIndex]){
 				ctrlVx = 0;
 				ctrlVy = 0;
@@ -201,6 +211,7 @@ void loop()
 			if(oldState_ != stateMain_){
 				oldState_ = stateMain_;
 				angle = 0;
+				robot.resetDistSum();
 			}
 
 			if(turnAngle(angleDes)){
@@ -220,8 +231,8 @@ void loop()
 			break;
 		}
 		}
-		//			Serial.print(robot.getIRMidDist(true));
-		//		Serial.print(" ");
+		Serial.print(robot.getIRAngle(true));
+		Serial.print(" ");
 		Serial.println();
 		robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 		robot.move();

@@ -32,10 +32,12 @@ public:
 	void setSpeed(float speed);
 	bool isBatteryVoltageTooLow();
 	bool keepWallDist(float distance, float& vx, float& vy, bool toSide = false);
+	bool keepWallDist(float distance, float& vx, float& vy, float stepThreshold);
 	bool keepWallAngle(float angle,float& omega, bool toSide = false);
 	void setStepSize(float stepSize);
 	float getIRAngle(bool side);
 	float getIRMidDist(bool side);
+	void resetDistSum();
 	bool objectAvoidance(float thresholdFront, float thresholdSide, float& vx, float& vy, float& omega);
 private:
 	static const byte pinLeftFront_ = 46;
@@ -66,6 +68,8 @@ private:
 	float stepSize_;
 	float vMax_ = 5;
 	float omegaMax_ = 40;
+	float distSum_ = 0;
+	unsigned int distCnt_ = 1;
 	inline void limit (float& val,float max)
 	{val = val > max ? max:((val<-max) ? -max:val);};
 

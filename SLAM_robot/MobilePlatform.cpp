@@ -152,6 +152,30 @@ bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 		return false;
 	}
 }
+bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
+		float stepThreshold) {
+	float currentDist = getIRMidDist(true);
+	if(distCnt_ == 1){
+		distSum_ = currentDist;
+		distCnt_++;
+		vy =  pidWallDist_.getControlVar(distance,currentDist,stepSize_);
+	}
+	else{
+		if(fabs(distSum_-distance) < stepThreshold){
+			distSum_ += currentDist/distCnt_;
+			vy =  pidWallDist_.getControlVar(distance,currentDist,stepSize_);
+		}
+	}
+
+	if (pidWallDist_.isSettled(0.5)){
+		pidWallDist_.reset();
+		return true;
+	}
+	else{
+		return false;
+	}
+
+}
 
 bool MobilePlatform::keepWallAngle(float angle, float& omega, bool toSide) {
 	//Function uses controller to keep angle to wall
@@ -294,7 +318,10 @@ float MobilePlatform::getIRMidDist(bool side) {
 		return (IRDistFrontRight_ + IRDistFrontLeft_)/2;
 }
 
-
+void MobilePlatform::resetDistSum() {
+	distSum_ = 0;
+	distCnt_ = 1;
+}
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,
 		float& dt4, float vx, float vy, float omega) {
