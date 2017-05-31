@@ -3,7 +3,6 @@
 #include "UltraSonicSensor.h"
 #include "I2Cdev.h"
 #include "MPU.h"
-#include "Kalman.h"
 #include "MobilePlatform.h"
 #include "PIDController.h"
 #include "LightChrono.h"
@@ -17,10 +16,9 @@ IRSensor IR_side_front(SHARP_YA,A3);
 IRSensor IR_side_back(SHARP_YA,A4);
 MobilePlatform robot;
 LightChrono chrono_;
-PIDController pidRotary(0.4,0.0000005,0.01);
+PIDController pidRotary(1.1,0.0000013,0.01);
 PIDController pidSide(0.3, 0.0001, 0.001);
 
-Kalman kalmanZ;
 uint32_t timer;
 float mag[3];
 float gyr[3];
@@ -48,7 +46,11 @@ float stepThreshold = 8.0;
 float wallDistances[4] = {10,25,40,55};
 statesInit stateInit_ = INIT_SPIN;
 statesMain stateMain_ = STATE_INIT;
+//statesMain stateMain_ = STATE_DRIVE_WALL;
 statesMain oldState_ = NONE;
+float irAngle = 0;
+float irAngleOld = 0;
+float dAngle = 0;
 
 
 void setup()
@@ -68,8 +70,8 @@ void setup()
 }
 
 bool turnAngle(float angleGoal){
-	ctrlOmega = pidRotary.getControlVar(angleGoal,angle,dt);
-	if(pidRotary.isSettled(0.3)){
+	ctrlOmega = pidRotary.getControlVar(angleGoal,angle,dt,0.075);
+	if(pidRotary.isSettled(0.9)){
 		pidRotary.reset();
 		ctrlOmega = 0;
 		return true;
@@ -100,12 +102,15 @@ void loop()
 		angle += gyr[2] * dt;
 		rotError = angleDes - angle;
 
-		IRValues[0]= IR_front_left.getValue(LINEAR);
-		IRValues[1] = IR_front_right.getValue(LINEAR);
-		IRValues[2]= IR_side_front.getValue(LINEAR);
-		IRValues[3] = IR_side_back.getValue(LINEAR);
+		IRValues[0]= IR_front_left.getValue();
+		IRValues[1] = IR_front_right.getValue();
+		IRValues[2]= IR_side_front.getValue();
+		IRValues[3] = IR_side_back.getValue();
 		usDistance = ultrasonic.getDistance();
 		robot.giveSensorVals(IRValues,usDistance);
+		irAngle = robot.getIRAngle(true);
+		dAngle = (irAngle - irAngleOld)/dt;
+		irAngleOld = irAngle;
 		robot.setStepSize(dt);
 
 		switch(stateMain_){
@@ -161,6 +166,7 @@ void loop()
 					ctrlOmega = 0;
 					ctrlVx = 0;
 					ctrlVy = 0;
+					angle = 0;
 				}
 				break;
 			}
@@ -172,7 +178,8 @@ void loop()
 		case STATE_DRIVE_WALL:{
 
 			robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
-			robot.keepWallAngle(0,ctrlOmega,true);
+			//robot.keepWallAngle(0,ctrlOmega,true);
+			ctrlOmega = pidRotary.getControlVar(0,angle,dt,0.1);
 			//Speed along wall
 			ctrlVx = wallSpeed;
 			//Counter to check whether distance to wall must be increased
@@ -217,7 +224,7 @@ void loop()
 			if(turnAngle(angleDes)){
 				toState(STATE_DRIVE_WALL);
 				turnCnt++;
-
+				angle = 0;
 				ctrlOmega = 0;
 				ctrlVx = 0;
 				ctrlVy = 0;
@@ -231,9 +238,13 @@ void loop()
 			break;
 		}
 		}
-		Serial.print(robot.getIRAngle(true));
-		Serial.print(" ");
-		Serial.println();
+//		Serial.print(dAngle);
+//		Serial.print(" ");
+//		Serial.print(-30000);
+//		Serial.print(" ");
+//		Serial.print(30000);
+//		Serial.print(" ");
+//		Serial.println();
 		robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 		robot.move();
 		//delay(10);

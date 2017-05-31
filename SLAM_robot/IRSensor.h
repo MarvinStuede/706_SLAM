@@ -25,7 +25,7 @@ class IRSensor {
 public:
 	IRSensor(SHARP type, int avgNum);
 	virtual ~IRSensor();
-	float getValue(corrType type = LINEAR);
+	float getValue(bool useFilter = false);
 	void setup(float a1, float a2);
 
 private:

@@ -12,7 +12,7 @@ IRSensor::IRSensor(SHARP type, int pin) {
 	type_ = type;
 	pin_ = pin;
 	oldDist_ = 0;
-  numValues = 0;
+	numValues = 0;
 	corrParam1_ = 1;
 	corrParam2_ = 0;
 }
@@ -21,20 +21,16 @@ IRSensor::~IRSensor() {
 	// TODO Auto-generated destructor stub
 }
 
-float IRSensor::getValue(corrType type) {
+float IRSensor::getValue(bool useFilter) {
 	float readVal;
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
-	//readVal = movingMedianFilter(readSensor(type_, pin_));
-	//readVal = movingAverFilter(readSensor(type_, pin_));
-	readVal = readSensor(type_,pin_);
-	oldDist_ = getCorrectLinear(readVal);
-		if(type == LINEAR){
-			oldDist_ = getCorrectLinear(readVal);
-		}
-		else if(type == EXPONENTIAL){
-			oldDist_ = getCorrectExp(readVal);
-		}
+		if (useFilter)
+			readVal = movingMedianFilter(readSensor(type_, pin_));
+		else
+			readVal = readSensor(type_,pin_);
+
+		oldDist_ = getCorrectLinear(readVal);
 
 		chrono_.restart();
 	}
@@ -47,39 +43,39 @@ float IRSensor::movingMedianFilter(float curDistance){
 	int length = 4;
 	float arraySort[length];
 
-  if (numValues < length) {
-    recordDistances[numValues] = curDistance;
-    numValues++;
-    return curDistance;
-  }else {
-	  //shifts values up the array
-    for (int i = 1; i < length; i++) {
-		recordDistances[i - 1] = recordDistances[i];
-		arraySort[i - 1] = recordDistances[i - 1];
-    }
+	if (numValues < length) {
+		recordDistances[numValues] = curDistance;
+		numValues++;
+		return curDistance;
+	}else {
+		//shifts values up the array
+		for (int i = 1; i < length; i++) {
+			recordDistances[i - 1] = recordDistances[i];
+			arraySort[i - 1] = recordDistances[i - 1];
+		}
 
-    recordDistances[length-1] = curDistance;
-	arraySort[length-1] = curDistance;
-  }
-  
+		recordDistances[length-1] = curDistance;
+		arraySort[length-1] = curDistance;
+	}
 
-  for (int i = 0; i < length/2; i++) {
-	  smallest = arraySort[i];
-	  smallestIndex = i;
-	  for (int j = i+1; j < length; j++) {
-		  if (arraySort[j] < smallest) {
-			  smallest = arraySort[j];
-			  smallestIndex = j;
-		  }
-	  }
 
-	  if ((smallestIndex != i)&&(i != 4)) {
-		  arraySort[smallestIndex] = arraySort[i];
-		  arraySort[i] = smallest;
-	  }
-  }
-  //Sorting
-  /*
+	for (int i = 0; i < length/2; i++) {
+		smallest = arraySort[i];
+		smallestIndex = i;
+		for (int j = i+1; j < length; j++) {
+			if (arraySort[j] < smallest) {
+				smallest = arraySort[j];
+				smallestIndex = j;
+			}
+		}
+
+		if ((smallestIndex != i)&&(i != 4)) {
+			arraySort[smallestIndex] = arraySort[i];
+			arraySort[i] = smallest;
+		}
+	}
+	//Sorting
+	/*
   for(int x = 0; x < 8; x++) {
    for(int y = 0; y < 8-(x+1); y++) {
      if(recordDistances[y] > recordDistances[y+1]) {
@@ -89,31 +85,31 @@ float IRSensor::movingMedianFilter(float curDistance){
      }
    }
   }
-  */
+	 */
 
-  //bubbleSort();
+	//bubbleSort();
 
-  return smallest;
+	return smallest;
 }
 
 float IRSensor::movingAverFilter(float curDistance){
-  float sum = 0;
-  if (numValues < 10) {
-   recordDistances[numValues] = curDistance;
-    numValues++;
-  }else {
-    for (int i = 1; i < 10; i++) {
-      recordDistances[i-1] = recordDistances[i];
-    }
+	float sum = 0;
+	if (numValues < 10) {
+		recordDistances[numValues] = curDistance;
+		numValues++;
+	}else {
+		for (int i = 1; i < 10; i++) {
+			recordDistances[i-1] = recordDistances[i];
+		}
 
-    recordDistances[9] = curDistance;
-  }
+		recordDistances[9] = curDistance;
+	}
 
-  for (int i = 0; i < numValues; i++) {
-    sum += recordDistances[i];
- }
+	for (int i = 0; i < numValues; i++) {
+		sum += recordDistances[i];
+	}
 
-  return (float)sum/numValues;
+	return (float)sum/numValues;
 }
 
 void IRSensor::setup(float a1, float a2) {
@@ -171,7 +167,7 @@ float IRSensor::getCorrectExp(float val) {
 }
 
 void IRSensor::bubbleSort() {
-  float swap = 0;
+	float swap = 0;
 	/*bool swapped = true;
 	int j = 0;
 	int tmp;
@@ -188,16 +184,16 @@ void IRSensor::bubbleSort() {
 		}
 	}*/
 
- for (int i = 0 ; i < numValues ; i++)
-  {
-    for (int j = 0 ; j < numValues - i - 1; j++)
-    {
-      if (recordDistances[j] > recordDistances[j+1]) /* For decreasing order use < */
-      {
-        swap       = recordDistances[j];
-        recordDistances[j]   = recordDistances[j+1];
-        recordDistances[j+1] = swap;
-      }
-    }
-  }
+	for (int i = 0 ; i < numValues ; i++)
+	{
+		for (int j = 0 ; j < numValues - i - 1; j++)
+		{
+			if (recordDistances[j] > recordDistances[j+1]) /* For decreasing order use < */
+			{
+				swap       = recordDistances[j];
+				recordDistances[j]   = recordDistances[j+1];
+				recordDistances[j+1] = swap;
+			}
+		}
+	}
 }

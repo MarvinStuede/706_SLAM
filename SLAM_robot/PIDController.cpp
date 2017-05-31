@@ -21,7 +21,7 @@ float PIDController::getControlVar(float w, float r,float stepSize, float errorT
 	float error = w - r;
 
 	//Timer to determine if controller is settled
-	if(w/r > 0.9 && w/r < 1.1 ||
+	if(w/r > (1-errorTol) && w/r < (1+errorTol) ||
 			(w == 0&& fabs(error) < errorTol)){
 		if(!chronoSettled_.isRunning()){
 			chronoSettled_.start();

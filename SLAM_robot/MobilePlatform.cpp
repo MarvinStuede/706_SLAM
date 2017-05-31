@@ -139,10 +139,10 @@ bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 	//Functions uses Controller to keep distance to wall
 
 	if(toSide){
-		vy =  pidWallDist_.getControlVar(distance,getIRMidDist(true),stepSize_);
+		vy =  pidWallDist_.getControlVar(distance,getIRMidDist(true),stepSize_,0.1);
 	}
 	else{
-		vx = - pidWallDist_.getControlVar(distance,getIRMidDist(false),stepSize_);
+		vx = - pidWallDist_.getControlVar(distance,getIRMidDist(false),stepSize_,0.1);
 	}
 	if (pidWallDist_.isSettled(0.5)){
 		pidWallDist_.reset();
@@ -155,17 +155,9 @@ bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 		float stepThreshold) {
 	float currentDist = getIRMidDist(true);
-	if(distCnt_ == 1){
-		distSum_ = currentDist;
-		distCnt_++;
-		vy =  pidWallDist_.getControlVar(distance,currentDist,stepSize_);
-	}
-	else{
-		if(fabs(distSum_-distance) < stepThreshold){
-			distSum_ += currentDist/distCnt_;
-			vy =  pidWallDist_.getControlVar(distance,currentDist,stepSize_);
-		}
-	}
+
+	vy =  pidWallDist_.getControlVar(distance,currentDist,stepSize_,0.1);
+
 
 	if (pidWallDist_.isSettled(0.5)){
 		pidWallDist_.reset();
