@@ -14,15 +14,16 @@
 class Mapping {
 
 public:
-  Mapping();
+  Mapping(float firstSonarIn);
   virtual ~Mapping();
-  float robotPosition(float xPos, float yPos, float radAngle);
-  float obstaclePosition(float xPos, float yPos, float *IRsensors, float sonar);
+  void saveInfo(float sonarInput, bool isX);
+  void firstTurn();
   void sendInfo();
 private:
-  float currxPos;
-  float curryPos;
+  float xPos;
+  float yPos;
+  float xRefSonar;
+  float yRefSonar;
 };
 
 #endif /* MAPPING_H_ */
-
