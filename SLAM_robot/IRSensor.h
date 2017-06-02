@@ -26,7 +26,9 @@ public:
 	IRSensor(SHARP type, int avgNum);
 	virtual ~IRSensor();
 	float getValue(bool useFilter = false);
+	float getValueFiltered();
 	void setup(float a1, float a2);
+	float movingMedianFilter(float curDistance);
 
 private:
 	SHARP type_;
@@ -39,9 +41,9 @@ private:
 	float getCorrectExp(float val);
 	float readSensor(SHARP which_one, int which_analog_pin);
 	float movingAverFilter(float curDistance);
-	float movingMedianFilter(float curDistance);
 	void bubbleSort();
 	int numValues;
+	float filteredVal_ = 0;
 	float recordDistances[10];
 	//MedianFilter medianFilter(10,0);
 };

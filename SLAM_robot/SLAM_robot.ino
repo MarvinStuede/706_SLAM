@@ -6,6 +6,7 @@
 #include "MobilePlatform.h"
 #include "PIDController.h"
 #include "LightChrono.h"
+#include "Chrono.h"
 #include "Util.h"
 
 MPU mpu;
@@ -16,8 +17,9 @@ IRSensor IR_side_front(SHARP_YA,A3);
 IRSensor IR_side_back(SHARP_YA,A4);
 MobilePlatform robot;
 LightChrono chrono_;
-PIDController pidRotary(1.1,0.0000013,0.01);
+PIDController pidRotary(0.9,0.0000013,0.01);
 PIDController pidSide(0.3, 0.0001, 0.001);
+Chrono chronoEdge;
 
 uint32_t timer;
 float mag[3];
@@ -46,12 +48,13 @@ float stepThreshold = 8.0;
 float wallDistances[4] = {10,25,40,55};
 statesInit stateInit_ = INIT_SPIN;
 statesMain stateMain_ = STATE_INIT;
+statesTurn stateTurn = TURN_GYRO;
 //statesMain stateMain_ = STATE_DRIVE_WALL;
 statesMain oldState_ = NONE;
 float irAngle = 0;
 float irAngleOld = 0;
 float dAngle = 0;
-
+int trig = 0;
 
 void setup()
 {
@@ -70,14 +73,30 @@ void setup()
 }
 
 bool turnAngle(float angleGoal){
-	ctrlOmega = pidRotary.getControlVar(angleGoal,angle,dt,0.075);
-	if(pidRotary.isSettled(0.9)){
+	ctrlOmega = pidRotary.getControlVar(angleGoal,angle,dt,0.1);
+	if(pidRotary.isSettled(0.4)){
 		pidRotary.reset();
 		ctrlOmega = 0;
 		return true;
 	}
 	else
 		return false;
+}
+
+bool noObjectToSide(float dt,float threshold){
+	if(chronoEdge.isRunning()){
+		if(chronoEdge.elapsed() > 1500){
+			chronoEdge.restart();
+			chronoEdge.stop();
+		}
+		return false;
+	}
+	else if(robot.edgeDetected(dt,threshold)){
+		chronoEdge.start();
+		return false;
+	}
+	else
+		return true;
 }
 inline float rad2deg(float radVal){
 	return radVal * 180/M_PI;
@@ -104,11 +123,13 @@ void loop()
 
 		IRValues[0]= IR_front_left.getValue();
 		IRValues[1] = IR_front_right.getValue();
-		IRValues[2]= IR_side_front.getValue();
-		IRValues[3] = IR_side_back.getValue();
+		IRValues[2]= IR_side_front.getValue(true);
+		IRValues[3] = IR_side_back.getValue(true);
 		usDistance = ultrasonic.getDistance();
-		robot.giveSensorVals(IRValues,usDistance);
-		irAngle = robot.getIRAngle(true);
+		float sfF = IR_side_front.getValueFiltered();
+		float sbF = IR_side_back.getValueFiltered();
+		robot.giveSensorVals(IRValues,usDistance,sfF,sbF);
+		irAngle = robot.getIRAngle(true,true);
 		dAngle = (irAngle - irAngleOld)/dt;
 		irAngleOld = irAngle;
 		robot.setStepSize(dt);
@@ -177,7 +198,12 @@ void loop()
 		//State: Drive along wall, keep distance and angle to wall
 		case STATE_DRIVE_WALL:{
 
-			robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
+			if(noObjectToSide(dt,5700)){
+				robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
+				trig = 0;
+			}
+			else
+				trig = 1;
 			//robot.keepWallAngle(0,ctrlOmega,true);
 			ctrlOmega = pidRotary.getControlVar(0,angle,dt,0.1);
 			//Speed along wall
@@ -220,14 +246,25 @@ void loop()
 				angle = 0;
 				robot.resetDistSum();
 			}
-
-			if(turnAngle(angleDes)){
-				toState(STATE_DRIVE_WALL);
-				turnCnt++;
-				angle = 0;
-				ctrlOmega = 0;
-				ctrlVx = 0;
-				ctrlVy = 0;
+			switch(stateTurn){
+			case TURN_GYRO:{
+				if(turnAngle(angleDes)){
+					stateTurn = TURN_WALL;
+				}
+				break;
+			}
+			case TURN_WALL:{
+				if(robot.keepWallAngle(0,ctrlOmega,true)){
+					toState(STATE_DRIVE_WALL);
+					turnCnt++;
+					angle = 0;
+					ctrlOmega = 0;
+					ctrlVx = 0;
+					ctrlVy = 0;
+					stateTurn = TURN_GYRO;
+				}
+				break;
+			}
 			}
 			break;
 		}
@@ -238,13 +275,16 @@ void loop()
 			break;
 		}
 		}
-//		Serial.print(dAngle);
+		if(trig == 1)
+			Serial.print(50);
+		else
+			Serial.print(0);
+		Serial.print(" ");
+//		Serial.print(-5000);
 //		Serial.print(" ");
-//		Serial.print(-30000);
+//		Serial.print(5000);
 //		Serial.print(" ");
-//		Serial.print(30000);
-//		Serial.print(" ");
-//		Serial.println();
+		Serial.println();
 		robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 		robot.move();
 		//delay(10);

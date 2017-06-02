@@ -15,4 +15,9 @@ enum statesInit{
 	INIT_APP_WALL_3,
 	INIT_APP_WALL_4
 };
+
+enum statesTurn{
+	TURN_GYRO,
+	TURN_WALL,
+};
 #endif

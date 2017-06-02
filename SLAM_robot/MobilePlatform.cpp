@@ -287,19 +287,26 @@ bool MobilePlatform::objectAvoidance(float thresholdFront, float thresholdSide, 
 void MobilePlatform::setStepSize(float stepSize) {
 	stepSize_ = stepSize;
 }
-float MobilePlatform::getIRAngle(bool side) {
-	if (side)
-		return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 180/M_PI;
+float MobilePlatform::getIRAngle(bool side, bool filtered) {
+	if (side){
+		if (filtered)
+			return atan2((IRDistSideFrontFiltered_-IRDistSideBackFiltered_)/100,irDistSide_) * 180/M_PI;
+
+		else
+			return atan2((IRDistSideFront_-IRDistSideBack_)/100,irDistSide_) * 180/M_PI;
+	}
 	else
 		return atan2((IRDistFrontRight_-IRDistFrontLeft_)/100,2 * l1_) *180/M_PI;
 
 }
 
-void MobilePlatform::giveSensorVals(float* IRValues, float usDistance) {
+void MobilePlatform::giveSensorVals(float* IRValues, float usDistance, float sfF,float sbF) {
 	IRDistFrontLeft_ = IRValues[0];
 	IRDistFrontRight_ = IRValues[1];
 	IRDistSideFront_ = IRValues[2];
 	IRDistSideBack_ = IRValues[3];
+	IRDistSideBackFiltered_ = sbF;
+	IRDistSideFrontFiltered_ = sfF;
 	usDistFront_ = usDistance;
 }
 
@@ -313,6 +320,14 @@ float MobilePlatform::getIRMidDist(bool side) {
 void MobilePlatform::resetDistSum() {
 	distSum_ = 0;
 	distCnt_ = 1;
+}
+
+bool MobilePlatform::edgeDetected(float dt, float threshold) {
+	float angle = getIRAngle(true,true);
+	float dAngle = (angle - AngleOld_)/dt;
+	AngleOld_ = angle;
+	return fabs(dAngle) > threshold;
+
 }
 
 void MobilePlatform::inverseKinematics(float& dt1, float& dt2, float& dt3,

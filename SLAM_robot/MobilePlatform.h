@@ -17,7 +17,7 @@ public:
 	MobilePlatform();
 	virtual ~MobilePlatform();
 	void setup();
-	void giveSensorVals(float* IRValues, float usDistance);
+	void giveSensorVals(float* IRValues, float usDistance, float sfF,float sbF);
 	void moveForward();
 	void moveLeft();
 	void moveBackward();
@@ -35,8 +35,9 @@ public:
 	bool keepWallDist(float distance, float& vx, float& vy, float stepThreshold);
 	bool keepWallAngle(float angle,float& omega, bool toSide = false);
 	void setStepSize(float stepSize);
-	float getIRAngle(bool side);
+	float getIRAngle(bool side, bool filtered = false);
 	float getIRMidDist(bool side);
+	bool edgeDetected(float dt, float threshold);
 	void resetDistSum();
 	bool objectAvoidance(float thresholdFront, float thresholdSide, float& vx, float& vy, float& omega);
 private:
@@ -52,6 +53,8 @@ private:
 	float IRDistFrontRight_ = 0;
 	float IRDistSideFront_ = 0;
 	float IRDistSideBack_ = 0;
+	float IRDistSideFrontFiltered_ = 0;
+	float IRDistSideBackFiltered_ = 0;
 	float usDistFront_ = 0;
 	Servo motorFrontLeft_;
 	Servo motorFrontRight_;
@@ -66,9 +69,10 @@ private:
 	float speedBackLeft_;
 	float speedBackRight_;
 	float stepSize_;
-	float vMax_ = 5;
+	float vMax_ = 4.5;
 	float omegaMax_ = 40;
 	float distSum_ = 0;
+	float AngleOld_ = 0;
 	unsigned int distCnt_ = 1;
 	inline void limit (float& val,float max)
 	{val = val > max ? max:((val<-max) ? -max:val);};

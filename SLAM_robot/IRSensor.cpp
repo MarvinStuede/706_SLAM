@@ -26,9 +26,8 @@ float IRSensor::getValue(bool useFilter) {
 	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
 	{
 		if (useFilter)
-			readVal = movingMedianFilter(readSensor(type_, pin_));
-		else
-			readVal = readSensor(type_,pin_);
+			filteredVal_ = movingMedianFilter(readSensor(type_, pin_));
+		readVal = readSensor(type_,pin_);
 
 		oldDist_ = getCorrectLinear(readVal);
 
@@ -196,4 +195,8 @@ void IRSensor::bubbleSort() {
 			}
 		}
 	}
+}
+
+float IRSensor::getValueFiltered() {
+	return filteredVal_;
 }
