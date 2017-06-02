@@ -8,21 +8,27 @@
 #include "Mapping.h"
 
 
-Mapping::Mapping() {
-  currxPos = 0;
-  curryPos = 0;
+Mapping::Mapping(float firstSonarIn) {
+  xPos = 0;
+  yPos = 0;
+  xRefSonar = firstSonarIn;
 }
 
 Mapping::~Mapping() {
 	// TODO Auto-generated destructor stub
 }
 
-float robotPosition(float xPos, float yPos, float radAngle) {
-  
+void firstTurn(float secondSonarIn) {
+  yRefSonar = secondSonarIn;
 }
 
-float obstaclePosition(float xPos, float yPos, float *IRsensors, float sonar) {
-  
+void saveInfo(float sonarInput, bool isX) {
+  if(isX == 1) {
+    xPos = xRefSonar - sonarInput;
+  }
+  else  {
+    yPos = yRefSonar - sonarInput;
+  }
 }
 
 void sendInfo() {
