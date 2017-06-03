@@ -32,27 +32,27 @@ void MPU::setup() {
 	pinMode(myLed, OUTPUT);
 	digitalWrite(myLed, HIGH);
 	byte c = mpu.readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);
-	Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX);
-	Serial.print(" I should be "); Serial.println(0x71, HEX);
+	//Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX);
+	//Serial.print(" I should be "); Serial.println(0x71, HEX);
 
 	if (c == 0x71) // WHO_AM_I should always be 0x68
 	{
-		Serial.println("MPU9250 is online...");
+		//Serial.println("MPU9250 is online...");
 
 		// Start by performing self test and reporting values
 		mpu.MPU9250SelfTest(mpu.selfTest);
-		Serial.print("x-axis self test: acceleration trim within : ");
-		Serial.print(mpu.selfTest[0],1); Serial.println("% of factory value");
-		Serial.print("y-axis self test: acceleration trim within : ");
-		Serial.print(mpu.selfTest[1],1); Serial.println("% of factory value");
-		Serial.print("z-axis self test: acceleration trim within : ");
-		Serial.print(mpu.selfTest[2],1); Serial.println("% of factory value");
-		Serial.print("x-axis self test: gyration trim within : ");
-		Serial.print(mpu.selfTest[3],1); Serial.println("% of factory value");
-		Serial.print("y-axis self test: gyration trim within : ");
-		Serial.print(mpu.selfTest[4],1); Serial.println("% of factory value");
-		Serial.print("z-axis self test: gyration trim within : ");
-		Serial.print(mpu.selfTest[5],1); Serial.println("% of factory value");
+		//Serial.print("x-axis self test: acceleration trim within : ");
+		//Serial.print(mpu.selfTest[0],1); Serial.println("% of factory value");
+		//Serial.print("y-axis self test: acceleration trim within : ");
+		//Serial.print(mpu.selfTest[1],1); Serial.println("% of factory value");
+		//Serial.print("z-axis self test: acceleration trim within : ");
+		//Serial.print(mpu.selfTest[2],1); Serial.println("% of factory value");
+		//Serial.print("x-axis self test: gyration trim within : ");
+		//Serial.print(mpu.selfTest[3],1); Serial.println("% of factory value");
+		//Serial.print("y-axis self test: gyration trim within : ");
+		//Serial.print(mpu.selfTest[4],1); Serial.println("% of factory value");
+		//Serial.print("z-axis self test: gyration trim within : ");
+		//Serial.print(mpu.selfTest[5],1); Serial.println("% of factory value");
 
 		// Calibrate gyro and accelerometers, load biases in bias registers
 		mpu.calibrateMPU9250(mpu.gyroBias, mpu.accelBias);
@@ -60,20 +60,20 @@ void MPU::setup() {
 		mpu.initMPU9250();
 		// Initialize device for active mode read of acclerometer, gyroscope, and
 		// temperature
-		Serial.println("MPU9250 initialized for active data mode....");
+		//Serial.println("MPU9250 initialized for active data mode....");
 
 		// Read the WHO_AM_I register of the magnetometer, this is a good test of
 		// communication
 		byte d = mpu.readByte(AK8963_ADDRESS, WHO_AM_I_AK8963);
-		Serial.print("AK8963 "); Serial.print("I AM "); Serial.print(d, HEX);
-		Serial.print(" I should be "); Serial.println(0x48, HEX);
+		//Serial.print("AK8963 "); Serial.print("I AM "); Serial.print(d, HEX);
+		//Serial.print(" I should be "); Serial.println(0x48, HEX);
 
 		// Get magnetometer calibration from AK8963 ROM
 		mpu.initAK8963(mpu.factoryMagCalibration);
 
 		// Initialize device for active mode read of magnetometer
-		Serial.println("AK8963 initialized for active data mode....");
-		if (SerialDebug)
+		//Serial.println("AK8963 initialized for active data mode....");
+		/*if (SerialDebug)
 		{
 			//  Serial.println("Calibration values: ");
 			Serial.print("X-Axis sensitivity adjustment value ");
@@ -82,7 +82,7 @@ void MPU::setup() {
 			Serial.println(mpu.factoryMagCalibration[1], 2);
 			Serial.print("Z-Axis sensitivity adjustment value ");
 			Serial.println(mpu.factoryMagCalibration[2], 2);
-		}
+		}*/
 		//calibrate();
 	}
 
@@ -93,7 +93,7 @@ void MPU::calibrate()
 	uint16_t ii = 0, sample_count = 0;
 	int32_t mag_bias[3] = {0, 0, 0};
 	int16_t mag_max[3] = {0, 0, 0}, mag_min[3] = {0, 0, 0}, mag_temp[3] = {0, 0, 0};
-	Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+	//Serial.println("Mag Calibration: Wave device in a figure eight until done!");
 	delay(4000);
 	sample_count = 64;
 	for(ii = 0; ii < sample_count; ii++) {
@@ -104,16 +104,16 @@ void MPU::calibrate()
 		}
 		delay(135); // at 8 Hz ODR, new mag data is available every 125 ms
 	}
-	Serial.println("mag x min/max:"); Serial.println(mag_max[0]); Serial.println(mag_min[0]);
-	Serial.println("mag y min/max:"); Serial.println(mag_max[1]); Serial.println(mag_min[1]);
-	Serial.println("mag z min/max:"); Serial.println(mag_max[2]); Serial.println(mag_min[2]);
+	//Serial.println("mag x min/max:"); Serial.println(mag_max[0]); Serial.println(mag_min[0]);
+	//Serial.println("mag y min/max:"); Serial.println(mag_max[1]); Serial.println(mag_min[1]);
+	//Serial.println("mag z min/max:"); Serial.println(mag_max[2]); Serial.println(mag_min[2]);
 	mag_bias[0] = (mag_max[0] + mag_min[0])/2; // get average x mag bias in counts
 	mag_bias[1] = (mag_max[1] + mag_min[1])/2; // get average y mag bias in counts
 	mag_bias[2] = (mag_max[2] + mag_min[2])/2; // get average z mag bias in counts
 	magBias_[0] = (float) mag_bias[0]; // save mag biases in G for main program
 	magBias_[1] = (float) mag_bias[1];
 	magBias_[2] = (float) mag_bias[2];
-	Serial.println("Mag Calibration done!");
+	//Serial.println("Mag Calibration done!");
 
 }
 

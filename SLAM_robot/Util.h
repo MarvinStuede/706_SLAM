@@ -5,7 +5,8 @@ enum statesMain{
 	STATE_INIT,
 	STATE_TURN,
 	STATE_DRIVE_WALL,
-	STATE_WAIT
+	STATE_WAIT,
+  STATE_OBSTACLE
 };
 
 enum statesInit{

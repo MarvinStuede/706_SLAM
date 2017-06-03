@@ -77,7 +77,8 @@ private:
 	inline void limit (float& val,float max)
 	{val = val > max ? max:((val<-max) ? -max:val);};
 
-	int avoidanceState; //Records the state of the object avoidance function;
+	int avoidanceState = 0; //Records the state of the object avoidance function;
+  int numObjectDetected = 0;
 
 	void inverseKinematics(float &dt1,float &dt2,float &dt3,float &dt4,float vx, float vy, float omega);
 };
