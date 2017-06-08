@@ -19,11 +19,10 @@ IRSensor IR_side_front(SHARP_YA, A3);
 IRSensor IR_side_back(SHARP_YA, A4);
 MobilePlatform robot;
 //LightChrono chrono_;//, mapTimer_;
-PIDController pidRotary(1.0, 0.000001, 0.01);
+PIDController pidRotary(1.1, 0.0000013, 0.01);
 //PIDController pidSide(0.3, 0.0001, 0.001);
 Chrono chronoEdge, stopTime;
-LightChrono chronoMap;
-Mapping map_;
+//Mapping map_;
 
 //Global variables
 uint32_t timer;
@@ -67,15 +66,22 @@ void setup()
 	Serial.begin(115200);
 	//Serial1.begin(115200);
 
+<<<<<<< HEAD
+	IR_front_left.setup(1.4197,-2.8392);
+	IR_front_right.setup(1.1074,-0.4708);
+	IR_side_front.setup(1.4239,-3.4408);
+	//IR_side_back.setup(1.5945,-9.1103);
+	IR_side_back.setup(1.4945,-9.1103);
+=======
 	IR_front_left.setup(1.4197, -4.8392);//-2.8392
 	IR_front_right.setup(1.1074, -2.4708); //0.4708
 	IR_side_front.setup(1.4239, -4.4408); //-3.4408
 	IR_side_back.setup(1.4945, -6.1103); //-9.1103
+>>>>>>> a8d7b18e9d9d3958e4b1e1b7ef1351d9b2cbca69
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
 	//chrono_.start();
-
 }
 
 bool turnAngle(float angleGoal) {
@@ -151,7 +157,7 @@ void loop()
 		robot.setStepSize(dt);
 
 		switch (stateMain_) {
-		//INIT State: Referencing (drive to corner)
+			//INIT State: Referencing (drive to corner)
 		case STATE_INIT: {
 			switch (stateInit_) {
 			case INIT_SPIN: {
@@ -214,8 +220,7 @@ void loop()
 					angle = 0;
 
 					//Initialise map: origin
-					chronoMap.start();
-					map_.initialise(usDistance, robot.getIRMidDist(true));
+					//map_.initialise(usDistance, robot.getIRMidDist(true));
 				}
 				break;
 			}
@@ -223,28 +228,35 @@ void loop()
 
 			break;
 		}
+<<<<<<< HEAD
 		//State: Drive along wall, keep distance and angle to wall
+		case STATE_DRIVE_WALL:{
+
+			if(noObjectToSide(dt,4500)){
+				robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
+				trig = 0;
+=======
+						 //State: Drive along wall, keep distance and angle to wall
 		case STATE_DRIVE_WALL: {
 			//Check for object avoidance
 			if (robot.objectAvoidance(10, 26, ctrlVx, ctrlVy, ctrlOmega)) {
 				toState(STATE_OBSTACLE);
 			}
 			else if (noObjectToSide(dt, 5700)) {
-				robot.keepWallDist(wallDistances[wallDistIndex] + 20, ctrlVx, ctrlVy, true);
+				//robot.keepWallDist(wallDistances[wallDistIndex] + 20, ctrlVx, ctrlVy, true);
 				ctrlOmega = pidRotary.getControlVar(0, angle, dt, 0.01);
-				trig = 0;
+				//trig = 0;
+>>>>>>> a8d7b18e9d9d3958e4b1e1b7ef1351d9b2cbca69
 			}
-			else{
-				trig = 1;
-				//ctrlVy =  0;
-			}
-			robot.keepWallAngle(0,ctrlOmega,true);
-			//ctrlOmega = pidRotary.getControlVar(0, angle, dt, 0.01);
+			else
+				//trig = 1;
+			//robot.keepWallAngle(0,ctrlOmega,true);
+			ctrlOmega = pidRotary.getControlVar(0, angle, dt, 0.01);
 
 			//Speed along wall
 			ctrlVx = wallSpeed;
 
-			//ctrlVy =  0;
+			ctrlVy =  0;
 
 			//Counter to check whether distance to wall must be increased
 			//Stop if US sensor has defined distance to wall
@@ -252,7 +264,7 @@ void loop()
 				//Still larger distances in array
 				if (wallDistIndex + 1 <= distances - 1) {
 					if ((usDistance <= wallDistances[wallDistIndex + 1])) {// && (sbF < wallDistances[wallDistIndex + 1] + 4)&& (sfF < wallDistances[wallDistIndex + 1] + 4)){
-						//if (fabs((IRValues[0] + IRValues[1] + usDistance + 4)/3 - wallDistances[wallDistIndex + 1] ) <= 5) {
+					//if (fabs((IRValues[0] + IRValues[1] + usDistance + 4)/3 - wallDistances[wallDistIndex + 1] ) <= 5) {
 						turnCnt = 0;
 						wallDistIndex++;
 						ctrlVx = 0;
@@ -282,7 +294,7 @@ void loop()
 
 			break;
 		}
-		//State: Turn for pre-defined angle
+							   //State: Turn for pre-defined angle
 		case STATE_TURN: {
 			if (oldState_ != stateMain_) {
 				oldState_ = stateMain_;
@@ -297,10 +309,9 @@ void loop()
 				break;
 			}
 			case TURN_WALL: {
-				if (robot.keepWallAngle(0, ctrlOmega, true)) {
+				if (robot.keepWallAngle(0, ctrlOmega, true)|| turnAngle(angleDes)) {
 					toState(STATE_DRIVE_WALL);
 					turnCnt++;
-					map_.robotTurned(usDistance,robot.getIRMidDist(true),turnCnt+1);
 					angle = 0;
 					ctrlOmega = 0;
 					ctrlVx = 0;
@@ -338,14 +349,14 @@ void loop()
 				ctrlOmega = 0;
 			}
 
-
+			
 
 			//Object or wall is detected by sonar. Move left to stop sonar detecting object else it is a wall.
 			ctrlVx = 0;
 			ctrlVy = 4;
 			ctrlOmega = 0;
 
-
+			
 
 			//Sonar has detected an object, once it detects the wall, after moving left, again return to moving straight.
 			if (usDistance > wallDistances[wallDistIndex]) {
@@ -374,7 +385,7 @@ void loop()
 		//		Serial.print(5000);
 		//		Serial.print(" ");
 		Serial.println();
-		 */
+		*/
 
 		//Controls motors for moving
 		robot.setSpeed(ctrlVx, ctrlVy, ctrlOmega);
@@ -383,18 +394,13 @@ void loop()
 		/*
 		Serial.print((IRValues[0] + IRValues[1] + usDistance + 4) / 3);
 		Serial.print(" ");
-
+		
 		Serial.print(sbF);
 		Serial.print(" ");
 		Serial.print(usDistance);
 		Serial.print(" ");
 		Serial.println(sfF);
-		 */
-		if(chronoMap.elapsed() > 250){
-			chronoMap.restart();
-			map_.savePoint(usDistance,robot.getIRMidDist(true),turnCnt+1);
-			map_.sendCurrentPoint(turnCnt);
-		}
+		*/
 	}
 	else
 		Serial.println("VOLTAGE TOO LOW");

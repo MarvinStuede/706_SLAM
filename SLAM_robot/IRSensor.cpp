@@ -23,8 +23,8 @@ IRSensor::~IRSensor() {
 
 float IRSensor::getValue(bool useFilter) {
 	float readVal;
-	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
-	{
+//	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
+//	{
 		readVal = readSensor(type_, pin_);
 
 		if (useFilter) {
@@ -38,8 +38,8 @@ float IRSensor::getValue(bool useFilter) {
 
 			oldDist_ = getCorrectLinear(readVal);
 
-		chrono_.restart();
-	}
+//		chrono_.restart();
+//	}
 	return oldDist_;
 }
 

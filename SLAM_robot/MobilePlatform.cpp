@@ -11,7 +11,7 @@ MobilePlatform::MobilePlatform() :
 	//pidWallDist_(0.5,0.0000001,0.01),
 	//pidWallRot_(0.415,0.000005,0.04){
 	pidWallDist_(1.5, 0.0000, 0),
-	pidWallRot_(1.8, 0.0000004, 0) {
+	pidWallRot_(1.0, 0.000013, 0) {
 	speed_ = 0;
 	speedFrontLeft_ = 0;
 	speedFrontRight_ = 0;
@@ -172,7 +172,7 @@ bool MobilePlatform::keepWallDist(float distance, float& vx, float& vy,
 bool MobilePlatform::keepWallAngle(float angle, float& omega, bool toSide) {
 	//Function uses controller to keep angle to wall
 
-	omega = -pidWallRot_.getControlVar(angle, getIRAngle(toSide, false), stepSize_, 2);
+	omega = -pidWallRot_.getControlVar(angle, getIRAngle(toSide, false), stepSize_, 1.5);
 	if (pidWallRot_.isSettled(0.3)) {
 		pidWallRot_.reset();
 		return true;
