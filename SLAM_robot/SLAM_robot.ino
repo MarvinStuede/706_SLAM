@@ -151,7 +151,7 @@ void loop()
 		//irAngleOld = irAngle;
 
 		switch (stateMain_) {
-			//INIT State: Referencing (drive to corner)
+		//INIT State: Referencing (drive to corner)
 		case STATE_INIT: {
 			switch (stateInit_) {
 			case INIT_SPIN: {
@@ -199,10 +199,10 @@ void loop()
 
 					//Keep distance to wall and drive forwards
 					robot.keepWallDist(wallDistances[0] + 20, ctrlVx, ctrlVy, true);
-				robot.keepWallAngle(0, ctrlOmega, true);
-				//turnAngle(angleDes);
-				ctrlVx = wallSpeed;
-			}
+					robot.keepWallAngle(0, ctrlOmega, true);
+					//turnAngle(angleDes);
+					ctrlVx = wallSpeed;
+				}
 				break;
 			}
 			case INIT_APP_WALL_4: {
@@ -215,7 +215,7 @@ void loop()
 					angle = 0;
 
 					//Initialise map: origin
-chronoMap.start();
+					chronoMap.start();
 					map_.initialise(usDistance, robot.getIRMidDist(true));
 				}
 				break;
@@ -224,7 +224,7 @@ chronoMap.start();
 
 			break;
 		}
-						 //State: Drive along wall, keep distance and angle to wall
+		//State: Drive along wall, keep distance and angle to wall
 		case STATE_DRIVE_WALL: {
 			//Check for object avoidance
 			if (robot.objectAvoidance(10, 26, ctrlVx, ctrlVy, ctrlOmega)) {
@@ -238,7 +238,7 @@ chronoMap.start();
 			}
 			else
 				trig = 1;
-		
+
 			//ctrlOmega = pidRotary.getControlVar(0, angle, dt, 1);
 
 			//Speed along wall
@@ -252,7 +252,7 @@ chronoMap.start();
 				//Still larger distances in array
 				if (wallDistIndex + 1 <= distances - 1) {
 					if ((usDistance <= wallDistances[wallDistIndex + 1])) {// && (sbF < wallDistances[wallDistIndex + 1] + 4)&& (sfF < wallDistances[wallDistIndex + 1] + 4)){
-					//if (fabs((IRValues[0] + IRValues[1] + usDistance + 4)/3 - wallDistances[wallDistIndex + 1] ) <= 5) {
+						//if (fabs((IRValues[0] + IRValues[1] + usDistance + 4)/3 - wallDistances[wallDistIndex + 1] ) <= 5) {
 						turnCnt = 0;
 						wallDistIndex++;
 						ctrlVx = 0;
@@ -271,18 +271,18 @@ chronoMap.start();
 			//Normal case, just turn
 			else if (usDistance <= wallDistances[wallDistIndex]) {
 				//else if (fabs((IRValues[0] + IRValues[1] + usDistance + 4)/3 - wallDistances[wallDistIndex]) <= 5){
-					ctrlVx = 0;
-					ctrlVy = 0;
-					ctrlOmega = 0;
-					angleDes = -90;
-					toState(STATE_TURN);
+				ctrlVx = 0;
+				ctrlVy = 0;
+				ctrlOmega = 0;
+				angleDes = -90;
+				toState(STATE_TURN);
 
 				toState(STATE_TURN);
 			}
 
 			break;
 		}
-							   //State: Turn for pre-defined angle
+		//State: Turn for pre-defined angle
 		case STATE_TURN: {
 			if (oldState_ != stateMain_) {
 				oldState_ = stateMain_;
@@ -292,7 +292,14 @@ chronoMap.start();
 			switch (stateTurn) {
 			case TURN_GYRO: {
 				if (turnAngle(angleDes)) {
-					stateTurn = TURN_WALL;
+					//stateTurn = TURN_WALL;
+					toState(STATE_DRIVE_WALL);
+					turnCnt++;
+					map_.robotTurned(usDistance,robot.getIRMidDist(true),turnCnt+1);
+					angle = 0;
+					ctrlOmega = 0;
+					ctrlVx = 0;
+					ctrlVy = 0;
 				}
 				break;
 			}
@@ -344,17 +351,14 @@ chronoMap.start();
 					ctrlOmega = 0;
 					break;
 				}
-				
-			}
 
-			
+			}
 
 			//Object or wall is detected by sonar. Move left to stop sonar detecting object else it is a wall.
 			ctrlVx = 0;
 			ctrlVy = 4;
 			ctrlOmega = 0;
 
-			
 			if (robot.objectAvoidance(10, 26, ctrlVx, ctrlVy, ctrlOmega)) {
 				toState(STATE_OBSTACLE);
 			}
@@ -386,7 +390,7 @@ chronoMap.start();
 		//		Serial.print(5000);
 		//		Serial.print(" ");
 		Serial.println();
-		*/
+		 */
 
 		//Controls motors for moving
 		robot.setSpeed(ctrlVx, ctrlVy, ctrlOmega);
@@ -395,21 +399,21 @@ chronoMap.start();
 		/*
 		Serial.print((IRValues[0] + IRValues[1] + usDistance + 4) / 3);
 		Serial.print(" ");
-		
+
 		Serial.print(sbF);
 		Serial.print(" ");
 		Serial.print(usDistance);
 		Serial.print(" ");
 		Serial.println(sfF);
-		*/
+		 */
 		/*Serial1.println(255);
 		Serial.print(robot.getIRAngle(true, true));
 		Serial.print(" ");
 		Serial.print(sbF);
 		Serial.print(" ");
 		Serial.println(sfF);
-		*/
-		if(chronoMap.elapsed() > 250){
+		 */
+		if(chronoMap.elapsed() > 250 && stateMain_ == STATE_DRIVE_WALL){
 			chronoMap.restart();
 			map_.savePoint(usDistance,robot.getIRMidDist(true),turnCnt+1);
 			map_.sendCurrentPoint(turnCnt);

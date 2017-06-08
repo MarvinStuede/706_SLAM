@@ -82,12 +82,12 @@ void Mapping::robotTurned(float sonarDist, float irDist, int direction)
 	else if (direction == 2) {
 		x_measure = sonarDist;
 		y_measure = irDist;
-		y_ref = yPos[numPoints - 1];
+		y_ref = yPosOld_;
 	}
 	else if (direction == 3) {
 		x_measure = irDist;
 		y_measure = sonarDist;
-		x_ref = xPos[numPoints - 1];
+		x_ref = xPosOld_;
 	}
 	else if (direction == 4){
 		x_measure = sonarDist;
@@ -107,19 +107,21 @@ void Mapping::sendData() {
 }
 
 void Mapping::sendCurrentPoint(int turnCnt) {
-	Serial.print(xPosNow_);
-	Serial.print(" ");
-	Serial.print(yPosNow_);
-	Serial.print(" ");
-	Serial.print(turnCnt * -90.);
-	Serial.print(" ");
-	Serial.println();
+//	Serial.print(xPosNow_);
+//	Serial.print(" ");
+//	Serial.print(yPosNow_);
+//	Serial.print(" ");
+//	Serial.print(turnCnt * -90.);
+//	Serial.print(" ");
+//	Serial.println();
 
-//	Serial1.print(xPosNow_);
-//	Serial1.print(" ");
-//	Serial1.print(yPosNow_);
-//	Serial1.print(" ");
-//	Serial1.println();
+	Serial1.print(xPosNow_);
+	Serial1.print(" ");
+	Serial1.print(yPosNow_);
+	Serial1.print(" ");
+	Serial1.print(turnCnt * -90.);
+	Serial1.print(" ");
+	Serial1.println();
 }
 /*
 void firstTurn(float secondSonarIn) {
