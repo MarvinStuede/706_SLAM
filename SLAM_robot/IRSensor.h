@@ -9,17 +9,18 @@
 #define LIBRARIES_IRSENSOR_IRSENSOR_H_
 #include <Arduino.h>
 #include <LightChrono.h>
-//#include "MedianFilter.h"
 
 	typedef enum {
 	  SHARP_DX, //2D120X
 	  SHARP_Ya, //2Y0A21
 	  SHARP_YA //2Y0A02
 	} SHARP;
+/*
 typedef enum corrType{
 	LINEAR,
-	EXPONENTIAL
+	EXPONENTIAL		*****************NO LONGER NEED THIS*********************
 }cType;
+*/
 class IRSensor {
 
 public:
@@ -38,14 +39,12 @@ private:
 	float corrParam1_;
 	float corrParam2_;
 	float getCorrectLinear(float val);
-	float getCorrectExp(float val);
+	//float getCorrectExp(float val);
 	float readSensor(SHARP which_one, int which_analog_pin);
 	float movingAverFilter(float curDistance);
-	void bubbleSort();
 	int numValues;
 	float filteredVal_ = 0;
-	float recordDistances[10];
-	//MedianFilter medianFilter(10,0);
+	float recordDistances[5];
 };
 
 #endif /* LIBRARIES_IRSENSOR_IRSENSOR_H_ */
