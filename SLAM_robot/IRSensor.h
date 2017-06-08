@@ -41,7 +41,7 @@ private:
 	float getCorrectLinear(float val);
 	//float getCorrectExp(float val);
 	float readSensor(SHARP which_one, int which_analog_pin);
-	float movingAverFilter(float curDistance);
+	//float movingAverFilter(float curDistance);
 	int numValues;
 	float filteredVal_ = 0;
 	float recordDistances[5];

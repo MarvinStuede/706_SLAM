@@ -23,8 +23,8 @@ IRSensor::~IRSensor() {
 
 float IRSensor::getValue(bool useFilter) {
 	float readVal;
-	if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
-	{
+	//if(chrono_.elapsed() > 60)//Wait at least 60ms between measurements
+	//{
 		readVal = readSensor(type_, pin_);
 
 		if (useFilter) {
@@ -33,13 +33,16 @@ float IRSensor::getValue(bool useFilter) {
 			/*if (filteredVal_ < 30) {
 				filteredVal_ = filteredVal_ + 3;
 			}*/
+			//oldDist_ = filteredVal_;
 		}
-
-
+		//else {
 			oldDist_ = getCorrectLinear(readVal);
+		//}
 
-		chrono_.restart();
-	}
+
+
+	//	chrono_.restart();
+	//}
 	return oldDist_;
 }
 
@@ -88,7 +91,7 @@ float IRSensor::movingMedianFilter(float curDistance){
 	return smallest;
 }
 
-float IRSensor::movingAverFilter(float curDistance){
+/*float IRSensor::movingAverFilter(float curDistance){
 	float sum = 0;
 	if (numValues < 10) {
 		recordDistances[numValues] = curDistance;
@@ -107,7 +110,7 @@ float IRSensor::movingAverFilter(float curDistance){
 
 	return (float)sum/numValues;
 }
-
+*/
 void IRSensor::setup(float a1, float a2) {
 
 	chrono_.start();
