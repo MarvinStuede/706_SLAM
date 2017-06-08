@@ -65,7 +65,8 @@ void setup()
 	IR_front_left.setup(1.4197,-2.8392);
 	IR_front_right.setup(1.1074,-0.4708);
 	IR_side_front.setup(1.4239,-3.4408);
-	IR_side_back.setup(1.5945,-9.1103);
+	//IR_side_back.setup(1.5945,-9.1103);
+	IR_side_back.setup(1.4945,-9.1103);
 	ultrasonic.setup();
 	mpu.setup();
 	robot.setup();
@@ -198,7 +199,7 @@ void loop()
 		//State: Drive along wall, keep distance and angle to wall
 		case STATE_DRIVE_WALL:{
 
-			if(noObjectToSide(dt,5700)){
+			if(noObjectToSide(dt,4500)){
 				robot.keepWallDist(wallDistances[wallDistIndex] + 20,ctrlVx,ctrlVy,true);
 				trig = 0;
 			}
@@ -280,10 +281,10 @@ void loop()
 		else
 			Serial.print(0);
 		Serial.print(" ");
-//		Serial.print(-5000);
-//		Serial.print(" ");
-//		Serial.print(5000);
-//		Serial.print(" ");
+		//		Serial.print(-5000);
+		//		Serial.print(" ");
+		//		Serial.print(5000);
+		//		Serial.print(" ");
 		Serial.println();
 		robot.setSpeed(ctrlVx,ctrlVy,ctrlOmega);
 		robot.move();
