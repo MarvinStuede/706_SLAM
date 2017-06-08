@@ -198,7 +198,7 @@ void loop()
 					ctrlVx = 0;
 					ctrlVy = 0;
 					ctrlOmega = 0;
-					angleDes = -85;
+					angleDes = -90;
 					angle = 0;
 					stateInit_ = INIT_APP_WALL_4;
 				}
