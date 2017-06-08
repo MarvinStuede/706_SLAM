@@ -34,9 +34,9 @@ private:
 	float xMaxDist = 0;
 	float xRefSonar;
 	float yRefSonar;
-	static constexpr float centriodToSonar_dist = 0.0863;  //**********************NEED TO INPUT CORRECT CONSTANT VALUES*********************
-	static constexpr float centriodToSideIR_dist = 0.0763;
-	static constexpr float centroidToBack_dist = 0.01;
+	static constexpr float centriodToSonar_dist = 11;  //**********************NEED TO INPUT CORRECT CONSTANT VALUES*********************
+	static constexpr float centriodToSideIR_dist = 9;
+	static constexpr float centroidToBack_dist = 14;
 };
 
 #endif /* MAPPING_H_ */

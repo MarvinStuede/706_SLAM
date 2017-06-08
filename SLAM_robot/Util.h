@@ -1,15 +1,16 @@
 #ifndef UTIL_H_
 #define UTIL_H_
-enum statesMain{
+enum statesMain {
 	NONE,
 	STATE_INIT,
 	STATE_TURN,
 	STATE_DRIVE_WALL,
 	STATE_WAIT,
-  STATE_OBSTACLE
+	STATE_OBSTACLE,
+	STATE_MOVE_LEFT
 };
 
-enum statesInit{
+enum statesInit {
 	INIT_SPIN,
 	INIT_APP_WALL_1,
 	INIT_APP_WALL_2,
@@ -17,7 +18,7 @@ enum statesInit{
 	INIT_APP_WALL_4
 };
 
-enum statesTurn{
+enum statesTurn {
 	TURN_GYRO,
 	TURN_WALL,
 };

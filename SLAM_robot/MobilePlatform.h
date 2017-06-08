@@ -17,7 +17,7 @@ public:
 	MobilePlatform();
 	virtual ~MobilePlatform();
 	void setup();
-	void giveSensorVals(float* IRValues, float usDistance, float sfF,float sbF);
+	void giveSensorVals(float* IRValues, float usDistance, float sfF, float sbF);
 	void moveForward();
 	void moveLeft();
 	void moveBackward();
@@ -33,7 +33,7 @@ public:
 	bool isBatteryVoltageTooLow();
 	bool keepWallDist(float distance, float& vx, float& vy, bool toSide = false);
 	bool keepWallDist(float distance, float& vx, float& vy, float stepThreshold);
-	bool keepWallAngle(float angle,float& omega, bool toSide = false);
+	bool keepWallAngle(float angle, float& omega, bool toSide = false);
 	void setStepSize(float stepSize);
 	float getIRAngle(bool side, bool filtered = false);
 	float getIRMidDist(bool side);
@@ -74,13 +74,16 @@ private:
 	float distSum_ = 0;
 	float AngleOld_ = 0;
 	unsigned int distCnt_ = 1;
-	inline void limit (float& val,float max)
-	{val = val > max ? max:((val<-max) ? -max:val);};
+	inline void limit(float& val, float max)
+	{
+		val = val > max ? max : ((val < -max) ? -max : val);
+	};
 
 	int avoidanceState = 0; //Records the state of the object avoidance function;
-  int numObjectDetected = 0;
-
-	void inverseKinematics(float &dt1,float &dt2,float &dt3,float &dt4,float vx, float vy, float omega);
+	int nextState = 0;
+	int stopCounter = 0;
+	int detection = 0;
+	void inverseKinematics(float &dt1, float &dt2, float &dt3, float &dt4, float vx, float vy, float omega);
 };
 
 #endif /* MOBILEPLATFORM_H_ */

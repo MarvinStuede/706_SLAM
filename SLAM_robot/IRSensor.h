@@ -44,7 +44,7 @@ private:
 	float movingAverFilter(float curDistance);
 	int numValues;
 	float filteredVal_ = 0;
-	float recordDistances[4];
+	float recordDistances[5];
 };
 
 #endif /* LIBRARIES_IRSENSOR_IRSENSOR_H_ */
