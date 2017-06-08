@@ -36,7 +36,7 @@ void Mapping::savePoint(float sonarDist, float irDist, int direction)
 			//xPos[numPoints] = irDist - centriodToSideIR_dist;
 			//yPos[numPoints] = (y_measure - sonarDist) + yPos[numPoints -1];
 			xPosNow_ = irDist - centriodToSideIR_dist;
-			yPosNow_ = (y_measure - sonarDist) + yPosOld_;
+			yPosNow_ += (y_measure - sonarDist);
 			x_measure = irDist;
 			y_measure = sonarDist;
 		}
@@ -44,8 +44,8 @@ void Mapping::savePoint(float sonarDist, float irDist, int direction)
 		else if (direction == 2) {
 			//		xPos[numPoints] = (x_measure - sonarDist) + xPos[numPoints - 1];
 			//		yPos[numPoints] = irDist - centriodToSideIR_dist + y_ref;
-			xPosNow_ = (x_measure - sonarDist) + xPosOld_;
-			yPosNow_ = irDist - centriodToSideIR_dist + y_ref;
+			xPosNow_ += (x_measure - sonarDist);
+			yPosNow_ -= irDist - centriodToSideIR_dist - y_measure;
 			x_measure = sonarDist;
 			y_measure = irDist;
 		}
@@ -53,8 +53,8 @@ void Mapping::savePoint(float sonarDist, float irDist, int direction)
 		else if (direction == 3) {
 			//		xPos[numPoints] = irDist - centriodToSideIR_dist + x_ref;
 			//		yPos[numPoints] = yPos[numPoints - 1] - (y_measure - sonarDist);
-			xPosNow_ = irDist - centriodToSideIR_dist + x_ref;
-			yPosNow_ = yPosOld_ - (y_measure - sonarDist);
+			xPosNow_ -= irDist - centriodToSideIR_dist -x_measure;
+			yPosNow_ -= (y_measure - sonarDist);
 			x_measure = irDist;
 			y_measure = sonarDist;
 		}
@@ -62,7 +62,7 @@ void Mapping::savePoint(float sonarDist, float irDist, int direction)
 		else if (direction == 4) {
 //			xPos[numPoints] = xPos[numPoints - 1] - (x_measure - sonarDist);
 //			yPos[numPoints] = irDist - centriodToSideIR_dist;
-			xPosNow_ = xPosOld_ - (x_measure - sonarDist);
+			xPosNow_ -= (x_measure - sonarDist);
 			yPosNow_ = irDist - centriodToSideIR_dist;
 			x_measure = sonarDist;
 			y_measure = irDist;
